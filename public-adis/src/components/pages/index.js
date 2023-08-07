@@ -1,0 +1,17 @@
+export { default as ErrorPage } from "./404Page";
+export { default as AboutUs } from "./AboutUs";
+export { default as AllAds } from "./AllAds";
+export { default as Auth } from "./Auth";
+export { default as Blog } from "./Blog";
+export { default as Category } from "./Category";
+export { default as Contact } from "./Contact";
+export { default as Dashboard } from "./Dashboard";
+export { default as FAQ } from "./FAQ";
+export { default as Home } from "./Home";
+export { default as MyAds } from "./MyAds";
+export { default as MyProfile } from "./MyProfile";
+export { default as PostAds } from "./PostAds";
+export { default as Product } from "./Product";
+export { default as Search } from "./Search";
+export { default as SingleAd } from "./SingleAd";
+export { default as SingleBlog } from "./SingleBlog";
