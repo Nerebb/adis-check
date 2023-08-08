@@ -39,11 +39,15 @@ class UserController {
       });
       user.hashPassword();
       user.save();
+
+      // confirmation email
+
       return new CreatedResponse({
         statusCode: HttpCode.CREATED,
         data: user,
         message: 'Registered successfully!'
-      })
+      });
+
     } catch (e) {
       return new BadRequestError('An error occured during register! Please contact admin for help!');
     }

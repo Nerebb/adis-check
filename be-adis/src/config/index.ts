@@ -11,5 +11,8 @@ export default {
   DB_PORT:  process.env.MYSQL_PORT ? parseInt(process.env.MYSQL_PORT) : 3306 as number,
   AUTH: {
     jwtSecret: process.env.JWT_SECRET ?? 'secret'
+  },
+  REGISTER: {
+    CONFIRMATION_EMAIL: process.env.CONFIRMATION_EMAIL ? parseInt(process.env.CONFIRMATION_EMAIL) : false,
   }
 };

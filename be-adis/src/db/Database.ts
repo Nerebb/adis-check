@@ -22,16 +22,11 @@ export class Database {
         logging: true,
         migrations: [],
         entities: [
-          // "../models/entities/**/*.ts"
           User
         ],
       });
     }
 
     return Database.instance;
-  }
-
-  public static setInstance(dataSource: DataSource) {
-    Database.instance = dataSource;
   }
 }
