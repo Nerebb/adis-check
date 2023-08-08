@@ -6,9 +6,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  OneToMany,
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import { Ads } from "./Ads";
 
 export enum Gender {
   Male = "Male",
@@ -59,7 +61,7 @@ export class User extends BaseEntity {
     type: "enum",
     enum: Gender,
     nullable: true,
-    default: Gender.Male
+    default: Gender.Male,
   })
   gender: Gender;
 
@@ -72,11 +74,14 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   cover: string;
 
+  @OneToMany(() => Ads, (ads) => ads.user)
+  ads: Ads[];
+
   @Column({
     type: "enum",
     enum: ERole,
     nullable: true,
-    default: ERole.Advertiser
+    default: ERole.Advertiser,
   })
   @IsNotEmpty()
   role: ERole;

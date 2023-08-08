@@ -8,7 +8,7 @@ export interface IBaseService<T> {
 
   findByIds(id: [EntityId]): Promise<T[]>;
 
-  store(data: any): Promise<T>;
+  store(data: T): void;
 
   update(id: EntityId, data: any): Promise<T>;
 
@@ -36,8 +36,8 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
     return this.repository.findByIds(ids);
   }
 
-  store(data: any): Promise<T> {
-    return this.repository.save(data);
+  store(data: T) {
+    return this.repository.create(data);
   }
 
   async update(id: number, data: any): Promise<T> {

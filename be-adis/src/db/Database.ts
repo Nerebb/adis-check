@@ -1,9 +1,10 @@
 import { User } from "../models/entities/User";
+import { Ads } from "../models/entities/Ads";
+import { Category } from "../models/entities/Category";
 import config from "../config";
 import { DataSource } from "typeorm";
 
 export class Database {
-
   private static instance: DataSource;
 
   private constructor() {}
@@ -21,9 +22,7 @@ export class Database {
         synchronize: true,
         logging: true,
         migrations: [],
-        entities: [
-          User
-        ],
+        entities: [User, Ads, Category],
       });
     }
 

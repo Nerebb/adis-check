@@ -12,20 +12,20 @@ class UserController {
 
     if (!username || !email || !password) {
       return res.status(400).send({
-        error: 'Bad Request!'
+        error: "Bad Request!",
       });
     }
 
     let user = await userRepository.findOne({
       where: {
-        email
-      }
+        email,
+      },
     });
 
     if (user) {
       return res.status(400).send({
-        error: 'Username or email was registered!'
-      })
+        error: "Username or email was registered!",
+      });
     }
 
     const salt = random();
@@ -35,7 +35,7 @@ class UserController {
         username,
         password,
         email,
-        phone
+        phone,
       });
       user.hashPassword();
       user.save();
@@ -45,14 +45,13 @@ class UserController {
       return new CreatedResponse({
         statusCode: HttpCode.CREATED,
         data: user,
-        message: 'Registered successfully!'
-      });
-
+        message: "Registered successfully!",
+      }).send(res);
     } catch (e) {
-      return new BadRequestError('An error occured during register! Please contact admin for help!');
+      return new BadRequestError(
+        "An error occured during register! Please contact admin for help!"
+      );
     }
-
   };
-
 }
 export default UserController;

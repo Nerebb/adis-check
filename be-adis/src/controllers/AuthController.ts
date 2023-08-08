@@ -7,12 +7,11 @@ import config from "../config";
 import { userRepository } from "../models/repositories/user.repository";
 
 class AuthController {
-
   static login = async (req: Request, res: Response) => {
     //Check if username and password are set
     let { username, password } = req.body;
     if (!(username && password)) {
-      res.status(400).send();
+      return res.status(400).send();
     }
 
     //Get user from database
@@ -20,10 +19,8 @@ class AuthController {
     try {
       user = await userRepository.findOneOrFail({ where: { username } });
     } catch (error) {
-      res.status(401).send();
+      return res.status(401).send();
     }
-
-
 
     //Check if encrypted password match
     if (!user.checkIfUnencryptedPasswordIsValid(password)) {
