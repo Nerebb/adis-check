@@ -5,41 +5,34 @@ import { validate } from "class-validator";
 import { User } from "@/models/entities/User";
 import config from "../config";
 import { userRepository } from "../models/repositories/user.repository";
+import { BadRequestError, NotAuthorizedError, NotFoundError, SuccessResponse } from "../helpers/utils";
 
 class AuthController {
 
   static login = async (req: Request, res: Response) => {
-    //Check if username and password are set
-    let { username, password } = req.body;
-    if (!(username && password)) {
-      res.status(400).send();
-    }
+    //Check if email and password are set
+    let { email, password } = req.body;
+    if (!(email && password)) throw new BadRequestError("AuthLogin: email or password not found")
 
-    //Get user from database
-    let user: User;
-    try {
-      user = await userRepository.findOneOrFail({ where: { username } });
-    } catch (error) {
-      res.status(401).send();
-    }
-
-
+    const user = await userRepository.findOne({ where: { email } })
+    if (!user) throw new NotFoundError("AuthLogin: User not found")
 
     //Check if encrypted password match
-    if (!user.checkIfUnencryptedPasswordIsValid(password)) {
-      res.status(401).send();
-      return;
-    }
+    if (!user.checkIfUnencryptedPasswordIsValid(password))
+      throw new NotAuthorizedError("AuthLogin: email or password incorrect")
 
     //Sing JWT, valid for 1 hour
     const token = jwt.sign(
-      { userId: user.id, username: user.username },
+      { userId: user.id, email: user.email },
       config.AUTH.jwtSecret,
       { expiresIn: "1h" }
     );
 
     //Send the jwt in the response
-    res.send(token);
+    return new SuccessResponse({
+      data: token,
+      message: "User login successfully",
+    }).send(res)
   };
 
   static changePassword = async (req: Request, res: Response) => {
@@ -81,7 +74,7 @@ class AuthController {
   };
 
   // static softDelete = async (req: Request, res: Response) => {
-  //   if (!JWT_TOKEN) return new Error(("Cannot delete user that not authorized"),)
+  //   if (!JWT_TOKEN) return new Error(("Cannot delete user that not authorized"))
   //   try {
   //     const softDelete = await userRepository.createQueryBuilder('')
   //       .softDelete()

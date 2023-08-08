@@ -9,7 +9,7 @@ import { User } from "@/models/entities/User";
 const JWT_TOKEN = false
 
 type TRegisterUser = Pick<User, 'email' | "username" | "password" | "phone">
-type TUpdateUser = Pick<User,
+type TUpdateUser = Partial<Pick<User,
   | "firstName"
   | "lastName"
   | "username"
@@ -19,7 +19,7 @@ type TUpdateUser = Pick<User,
   | "gender"
   | "avatar"
   | 'bio'
->
+>>
 
 class UserController {
   static register = async (req: Request, res: Response) => {
@@ -96,8 +96,6 @@ class UserController {
       data: responseData,
       message: "Get user profile successfully",
     }).send(res)
-
-
   }
 }
 export default UserController;
