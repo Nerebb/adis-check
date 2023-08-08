@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { userRepository } from "../models/repositories/user.repository";
 import { BadRequestError, CreatedResponse } from "../helpers/utils";
 import { HttpCode } from "../utils/httpCode";
+import { authentication, random } from "../utils/hash";
 
 class UserController {
   static register = async (req: Request, res: Response) => {
@@ -27,6 +28,8 @@ class UserController {
       })
     }
 
+    const salt = random();
+
     try {
       user = await userRepository.create({
         username,
@@ -34,6 +37,7 @@ class UserController {
         email,
         phone
       });
+      user.hashPassword();
       user.save();
       return new CreatedResponse({
         statusCode: HttpCode.CREATED,

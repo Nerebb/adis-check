@@ -7,10 +7,6 @@ import config from "../config";
 import { userRepository } from "../models/repositories/user.repository";
 
 class AuthController {
-  static register = async (req: Request, res: Response) => {
-    console.log("registering");
-  };
-
 
   static login = async (req: Request, res: Response) => {
     //Check if username and password are set
@@ -26,6 +22,8 @@ class AuthController {
     } catch (error) {
       res.status(401).send();
     }
+
+
 
     //Check if encrypted password match
     if (!user.checkIfUnencryptedPasswordIsValid(password)) {
