@@ -79,5 +79,25 @@ class AuthController {
 
     res.status(204).send();
   };
+
+  // static softDelete = async (req: Request, res: Response) => {
+  //   if (!JWT_TOKEN) return new Error(("Cannot delete user that not authorized"),)
+  //   try {
+  //     const softDelete = await userRepository.createQueryBuilder('')
+  //       .softDelete()
+  //       .where("id = :id", { id: 1 })
+  //       .execute();
+
+  //     // const deleteUser
+  //     return new CreatedResponse({
+  //       statusCode: HttpCode.CREATED,
+  //       data: softDelete,
+  //       message: 'User login successfully',
+  //     }).send(res)
+
+  //   } catch (error) {
+  //     return new BadRequestError('An error occured during login! Please contact admin for help!')
+  //   }
+  // }
 }
 export default AuthController;

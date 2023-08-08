@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
 import router from "./router/index";
-import { AppError, SuccessResponse } from "./helpers/utils";
+import { AppError, NotFoundError, SuccessResponse } from "./helpers/utils";
 import { HttpCode } from "./utils/httpCode";
 import { Database } from "./db/Database";
 import config from "./config";
@@ -29,6 +29,11 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(apiRoot, router);
+
+app.use((_res, _req, next) => {
+  const err = new NotFoundError('Not Found Url');
+  next(err);
+});
 
 app.use(
   (err: AppError, _req: Request, res: Response, _next: NextFunction): void => {
