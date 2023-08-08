@@ -1,35 +1,49 @@
 import "reflect-metadata";
-import express from 'express';
-import http from 'http';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import compression from 'compression';
-import cors from 'cors';
-import dataSource from "../ormconfig";
-
+import express, { NextFunction, Request, Response } from "express";
+import http from "http";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import compression from "compression";
+import cors from "cors";
+import router from "./router/index";
+import { AppError, SuccessResponse } from "./helpers/utils";
+import { HttpCode } from "./utils/httpCode";
+import { Database } from "./db/Database";
+import config from "./config";
 
 // establish database connection
-dataSource
-    .initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
-    })
+Database.getInstance().initialize();
 
+
+const apiRoot = '/api';
 const app = express();
 app.use(express.json());
-app.use(cors({
-  credentials: true,
-}));
+app.use(
+  cors({
+    credentials: true,
+  })
+);
 
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+app.use(apiRoot, router);
+
+app.use(
+  (err: AppError, _req: Request, res: Response, _next: NextFunction): void => {
+    console.log("ERROR", err);
+    new SuccessResponse({
+      success: false,
+      statusCode: err.httpCode ? err.httpCode : HttpCode.INTERNAL_SERVER_ERROR,
+      errors: { message: err.message },
+      message: err.isOperational ? err.errorType : "Internal Server Error",
+    }).send(res);
+  }
+);
+
 const server = http.createServer(app);
 
-server.listen(8080, () => {
-  console.log('Server running on http://localhost:8080/');
+server.listen(config.PORT, () => {
+  console.log(`Server running on http://localhost:${config.PORT}/`);
 });

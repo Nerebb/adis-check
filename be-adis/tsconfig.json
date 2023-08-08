@@ -1,13 +1,29 @@
 {
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "Node",
+    "declaration": true,
+    "moduleResolution": "NodeNext",
+    "target": "ES2021",
+    "outDir": "./dist",
     "baseUrl": "src",
-    "outDir": "dist",
-    "sourceMap": true,
-    "noImplicitAny": true,
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
-  "include": ["src/**/*"]
+  "include": [
+    "./src/**/*",
+    "module.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
