@@ -1,42 +1,45 @@
-import { Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
-import { validate } from "class-validator";
+import { Request, Response } from 'express';
+import * as jwt from 'jsonwebtoken';
+import { validate } from 'class-validator';
 
-import { User } from "@/models/entities/User";
-import config from "../config";
-import { userRepository } from "../models/repositories/user.repository";
+import { User } from '@/models/entities/User';
+import config from '../config';
+import { userRepository } from '../models/repositories/user.repository';
+import {
+  BadRequestError,
+  NotAuthorizedError,
+  NotFoundError,
+  SuccessResponse,
+} from '../helpers/utils';
 
 class AuthController {
   static login = async (req: Request, res: Response) => {
-    //Check if username and password are set
-    let { username, password } = req.body;
-    if (!(username && password)) {
-      return res.status(400).send();
-    }
+    //Check if email and password are set
+    const { username, password } = req.body;
+    if (!(username && password))
+      throw new BadRequestError('AuthLogin: email or password not found');
 
-    //Get user from database
-    let user: User;
-    try {
-      user = await userRepository.findOneOrFail({ where: { username } });
-    } catch (error) {
-      return res.status(401).send();
-    }
+    const user = await userRepository.findOne({ where: { username } });
+    if (!user) throw new NotFoundError('AuthLogin: User not found');
 
     //Check if encrypted password match
-    if (!user.checkIfUnencryptedPasswordIsValid(password)) {
-      res.status(401).send();
-      return;
-    }
+    if (!user.checkIfUnencryptedPasswordIsValid(password))
+      throw new NotAuthorizedError('AuthLogin: email or password incorrect');
 
     //Sing JWT, valid for 1 hour
     const token = jwt.sign(
-      { userId: user.id, username: user.username },
+      { userId: user.id, email: user.email, role: user.role },
       config.AUTH.jwtSecret,
-      { expiresIn: "1h" }
+      { expiresIn: '1h' }
     );
 
+    res.cookie('ADIS-AUTH', token, { domain: 'localhost', path: '/' });
+
     //Send the jwt in the response
-    res.send(token);
+    return new SuccessResponse({
+      data: token,
+      message: 'User login successfully',
+    }).send(res);
   };
 
   static changePassword = async (req: Request, res: Response) => {
@@ -76,5 +79,25 @@ class AuthController {
 
     res.status(204).send();
   };
+
+  // static softDelete = async (req: Request, res: Response) => {
+  //   if (!JWT_TOKEN) return new Error(("Cannot delete user that not authorized"))
+  //   try {
+  //     const softDelete = await userRepository.createQueryBuilder('')
+  //       .softDelete()
+  //       .where("id = :id", { id: 1 })
+  //       .execute();
+
+  //     // const deleteUser
+  //     return new CreatedResponse({
+  //       statusCode: HttpCode.CREATED,
+  //       data: softDelete,
+  //       message: 'User login successfully',
+  //     }).send(res)
+
+  //   } catch (error) {
+  //     return new BadRequestError('An error occured during login! Please contact admin for help!')
+  //   }
+  // }
 }
 export default AuthController;

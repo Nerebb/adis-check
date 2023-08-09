@@ -1,6 +1,6 @@
-import { HttpCode } from "../utils/httpCode";
-import { ReasonPhrases } from "../utils/reasonPhrases";
-import { Response } from "express";
+import { HttpCode } from '../utils/httpCode';
+import { ReasonPhrases } from '../utils/reasonPhrases';
+import { Response } from 'express';
 
 export class AppError extends Error {
   public readonly errorType: string;
@@ -99,9 +99,9 @@ export class SuccessResponse implements SendResponse {
     props: SendResponse = {
       statusCode: HttpCode.OK,
       success: true,
-      data: "oke",
+      data: 'oke',
       errors: undefined,
-      message: "success",
+      message: 'success',
     }
   ) {
     this.statusCode = props.statusCode;
@@ -111,14 +111,14 @@ export class SuccessResponse implements SendResponse {
     this.message = props.message;
   }
 
-  send(res: Response, headers = {}) {
+  send(res: Response) {
     return res.status(this.statusCode || HttpCode.OK).json(this);
   }
 }
 
 export class CreatedResponse extends SuccessResponse {
   constructor({
-    message = "oke",
+    message = 'oke',
     data = {},
     statusCode = HttpCode.CREATED,
     success = true,
@@ -128,7 +128,7 @@ export class CreatedResponse extends SuccessResponse {
 }
 export class NoDataResponse extends SuccessResponse {
   constructor({
-    message = "oke",
+    message = 'oke',
     data = {},
     statusCode = HttpCode.NO_CONTENT,
     success = true,

@@ -6,26 +6,24 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
-  OneToMany,
-} from "typeorm";
-import { Length, IsNotEmpty } from "class-validator";
-import * as bcrypt from "bcryptjs";
-import { Ads } from "./Ads";
+} from 'typeorm';
+import { Length, IsNotEmpty } from 'class-validator';
+import * as bcrypt from 'bcryptjs';
 
 export enum Gender {
-  Male = "Male",
-  Female = "Female",
-  NonBinary = "NonBinary",
+  Male = 'Male',
+  Female = 'Female',
+  NonBinary = 'NonBinary',
 }
 
 export enum ERole {
-  Advertiser = "Advertiser",
-  Affiliate = "Affiliate",
-  SearchEngine = "SearchEngine",
+  Advertiser = 'Advertiser',
+  Affiliate = 'Affiliate',
+  SearchEngine = 'SearchEngine',
 }
 
 @Entity()
-@Unique(["username"])
+@Unique(['username'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -58,14 +56,14 @@ export class User extends BaseEntity {
   country: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Gender,
     nullable: true,
     default: Gender.Male,
   })
   gender: Gender;
 
-  @Column("text", { nullable: true })
+  @Column('text', { nullable: true })
   bio: string;
 
   @Column({ nullable: true })
@@ -74,11 +72,8 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   cover: string;
 
-  @OneToMany(() => Ads, (ads) => ads.user)
-  ads: Ads[];
-
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: ERole,
     nullable: true,
     default: ERole.Advertiser,
