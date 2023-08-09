@@ -34,17 +34,15 @@ app.use((_res, _req, next) => {
   next(err);
 });
 
-app.use(
-  (err: AppError, _req: Request, res: Response): void => {
-    console.log('ERROR', err);
-    new SuccessResponse({
-      success: false,
-      statusCode: err.httpCode ? err.httpCode : HttpCode.INTERNAL_SERVER_ERROR,
-      errors: { message: err.message },
-      message: err.isOperational ? err.errorType : 'Internal Server Error',
-    }).send(res);
-  }
-);
+app.use((err: AppError, _req: Request, res: Response): void => {
+  console.log('ERROR', err);
+  new SuccessResponse({
+    success: false,
+    statusCode: err.httpCode ? err.httpCode : HttpCode.INTERNAL_SERVER_ERROR,
+    errors: { message: err.message },
+    message: err.isOperational ? err.errorType : 'Internal Server Error',
+  }).send(res);
+});
 
 const server = http.createServer(app);
 

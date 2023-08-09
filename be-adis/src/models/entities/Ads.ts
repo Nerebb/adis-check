@@ -6,9 +6,9 @@ import {
   UpdateDateColumn,
   ManyToOne,
   BaseEntity,
-} from "typeorm";
-import { Category } from "./Category";
-import { User } from "./User";
+} from 'typeorm';
+import { Category } from './Category';
+import { User } from './User';
 
 interface ILocation {
   location: string;
@@ -17,9 +17,9 @@ interface ILocation {
 }
 
 enum EType {
-  sport = "sport",
-  Manual = "Manual",
-  Sports = "Sports",
+  sport = 'sport',
+  Manual = 'Manual',
+  Sports = 'Sports',
 }
 
 @Entity()
@@ -27,7 +27,7 @@ export class Ads extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "text" })
+  @Column({ type: 'text' })
   ad_title: string;
 
   @ManyToOne(() => Category, (category) => category.ads)
@@ -42,31 +42,31 @@ export class Ads extends BaseEntity {
   @Column()
   userId: number;
 
-  @Column({ type: "json" })
+  @Column({ type: 'json' })
   location: ILocation; //   location =  {state,country,city}
 
   @Column()
   make: string;
 
-  @Column({ type: "int", nullable: true })
+  @Column({ type: 'int', nullable: true })
   model: number;
 
-  @Column({ type: "enum", enum: EType, nullable: true })
+  @Column({ type: 'enum', enum: EType, nullable: true })
   type: EType;
 
-  @Column({ type: "decimal" })
+  @Column({ type: 'decimal' })
   price: number;
 
   @Column()
-  condition: "New" | "Old";
+  condition: 'New' | 'Old';
 
   @Column()
   images: string;
 
-  @Column({ type: "boolean", default: true })
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @Column({ type: "text" })
+  @Column({ type: 'text' })
   description: string;
 
   @CreateDateColumn()

@@ -12,7 +12,6 @@ import {
 import { HttpCode } from '../utils/httpCode';
 import { User } from '@/models/entities/User';
 
-
 type TUpdateUser = Partial<
   Pick<
     User,
@@ -99,7 +98,7 @@ class UserController {
     const userProfile = await userRepository.findOne({
       where: { id, username },
     });
-    const {...responseData } = userProfile;
+    const { ...responseData } = userProfile;
 
     return new SuccessResponse({
       data: responseData,

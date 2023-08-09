@@ -1,5 +1,5 @@
-import { BaseEntity, DeleteResult, Repository } from "typeorm";
-import { EntityId } from "typeorm/repository/EntityId";
+import { BaseEntity, DeleteResult, Repository } from 'typeorm';
+import { EntityId } from 'typeorm/repository/EntityId';
 
 export interface IBaseService<T> {
   index(): Promise<T[]>;
@@ -10,7 +10,7 @@ export interface IBaseService<T> {
 
   store(data: T): void;
 
-  update(id: EntityId, data: any): Promise<T>;
+  update(id: EntityId, data): Promise<T>;
 
   delete(id: EntityId): Promise<DeleteResult>;
 }
@@ -40,7 +40,7 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
     return this.repository.create(data);
   }
 
-  async update(id: number, data: any): Promise<T> {
+  async update(id: number, data): Promise<T> {
     await this.repository.update(id, data);
     return this.findById(id);
   }

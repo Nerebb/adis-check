@@ -1,6 +1,6 @@
-import { Ads } from "../entities/Ads";
+import { Ads } from '../entities/Ads';
 
-import { Database } from "../../db/Database";
+import { Database } from '../../db/Database';
 
 const adsRepository = Database.getInstance().getRepository(Ads);
 
