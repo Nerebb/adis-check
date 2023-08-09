@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { Length, IsNotEmpty } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
+import { OneToMany } from 'typeorm/browser';
+import { Ads } from './Ads';
 
 export enum Gender {
   Male = 'Male',
@@ -80,6 +82,9 @@ export class User extends BaseEntity {
   })
   @IsNotEmpty()
   role: ERole;
+
+  @OneToMany(() => Ads, (ads) => ads.user)
+  ads: Ads[];
 
   @Column()
   @CreateDateColumn()

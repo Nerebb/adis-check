@@ -1,4 +1,4 @@
-import { Ads } from '@/models/entities/Ads';
+import { Ads } from '../models/entities/Ads';
 import {
   BadRequestError,
   CreatedResponse,
@@ -12,7 +12,7 @@ import categoryRepository from '../models/repositories/category.repository';
 class AdsController {
   static createAds = async (req: Request, res: Response) => {
     const { categoryId, ...other } = req.body;
-    const userId = 1; // todo validate token bỏ user id vô
+    const userId = res.locals.user.userId;
 
     if (!categoryId) throw new BadRequestError('Must have categoryId');
 
@@ -67,17 +67,18 @@ class AdsController {
   };
 
   static findByKeyword = async (req: Request, res: Response) => {
-    // todo query không được mai sửa
     const searchTitle = req.query.q;
 
-    // const page = parseInt(req.query.page as string, 10) || 1;
-    // const limit = parseInt(req.query.limit as string, 10) || 20;
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 20;
 
     const result = await adsRepository
       .createQueryBuilder()
       .select('*')
       .where(`MATCH(ad_title) AGAINST ('${searchTitle}' IN BOOLEAN MODE)`)
       .orWhere(`MATCH(make) AGAINST ('${searchTitle}' IN BOOLEAN MODE)`)
+      .skip((page - 1) * limit)
+      .take(limit)
       .getMany();
 
     new SuccessResponse({ message: 'find Ads', data: result }).send(res);

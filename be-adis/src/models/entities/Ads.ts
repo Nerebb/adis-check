@@ -10,13 +10,7 @@ import {
 import { Category } from './Category';
 import { User } from './User';
 
-interface ILocation {
-  location: string;
-  country: string;
-  city: string;
-}
-
-enum EType {
+export enum EType {
   sport = 'sport',
   Manual = 'Manual',
   Sports = 'Sports',
@@ -42,8 +36,14 @@ export class Ads extends BaseEntity {
   @Column()
   userId: number;
 
-  @Column({ type: 'json' })
-  location: ILocation; //   location =  {state,country,city}
+  @Column()
+  state: string;
+
+  @Column()
+  country: string;
+
+  @Column()
+  city: string;
 
   @Column()
   make: string;
@@ -57,11 +57,11 @@ export class Ads extends BaseEntity {
   @Column({ type: 'decimal' })
   price: number;
 
-  @Column()
+  @Column({ type: 'varchar', nullable: true })
   condition: 'New' | 'Old';
 
-  @Column()
-  images: string;
+  @Column({ type: 'array' })
+  images: string[];
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;

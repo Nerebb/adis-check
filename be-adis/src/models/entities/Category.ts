@@ -17,7 +17,7 @@ export class Category extends BaseEntity {
   id: number;
 
   @Column({ type: 'varchar', unique: true })
-  name_categories: string;
+  category: string;
 
   @Column({ type: 'json', nullable: true })
   meta_data: JSON;

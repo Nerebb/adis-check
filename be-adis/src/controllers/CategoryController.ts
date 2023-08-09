@@ -7,18 +7,13 @@ import {
 } from '../helpers/utils';
 class CategoryController {
   static createCategory = async (req: Request, res: Response) => {
-    const { name_categories, icon } = req.body;
+    const { category, icon } = req.body;
 
-    if (!icon) {
-      throw new BadRequestError('tuan');
-    }
-    const result = categoryRepository.create({ name_categories, icon });
+    const result = categoryRepository.create({ category, icon });
 
     await result.save();
 
-    await new CreatedResponse({ message: 'Create Ads', data: result }).send(
-      res
-    );
+    new CreatedResponse({ message: 'Create Ads', data: result }).send(res);
   };
 
   static updateCategory = async (req: Request, res: Response) => {
@@ -37,7 +32,7 @@ class CategoryController {
   static findAdd = async (req: Request, res: Response) => {
     const result = await categoryRepository.find();
 
-    new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+    new SuccessResponse({ message: 'Find Ads', data: result }).send(res);
   };
 }
 
