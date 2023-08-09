@@ -1,9 +1,8 @@
-import { User } from "../models/entities/User";
-import config from "../config";
-import { DataSource } from "typeorm";
+import { User } from '../models/entities/User';
+import config from '../config';
+import { DataSource } from 'typeorm';
 
 export class Database {
-
   private static instance: DataSource;
 
   private constructor() {}
@@ -12,7 +11,7 @@ export class Database {
     if (!Database.instance) {
       const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT } = config;
       Database.instance = new DataSource({
-        type: "mysql",
+        type: 'mysql',
         host: DB_HOST,
         port: DB_PORT,
         username: DB_USER,
@@ -21,9 +20,7 @@ export class Database {
         synchronize: true,
         logging: true,
         migrations: [],
-        entities: [
-          User
-        ],
+        entities: [User],
       });
     }
 

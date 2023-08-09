@@ -6,24 +6,24 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
-} from "typeorm";
-import { Length, IsNotEmpty } from "class-validator";
-import * as bcrypt from "bcryptjs";
+} from 'typeorm';
+import { Length, IsNotEmpty } from 'class-validator';
+import * as bcrypt from 'bcryptjs';
 
 export enum Gender {
-  Male = "Male",
-  Female = "Female",
-  NonBinary = "NonBinary",
+  Male = 'Male',
+  Female = 'Female',
+  NonBinary = 'NonBinary',
 }
 
 export enum ERole {
-  Advertiser = "Advertiser",
-  Affiliate = "Affiliate",
-  SearchEngine = "SearchEngine",
+  Advertiser = 'Advertiser',
+  Affiliate = 'Affiliate',
+  SearchEngine = 'SearchEngine',
 }
 
 @Entity()
-@Unique(["username"])
+@Unique(['username'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -56,14 +56,14 @@ export class User extends BaseEntity {
   country: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Gender,
     nullable: true,
-    default: Gender.Male
+    default: Gender.Male,
   })
   gender: Gender;
 
-  @Column("text", { nullable: true })
+  @Column('text', { nullable: true })
   bio: string;
 
   @Column({ nullable: true })
@@ -73,10 +73,10 @@ export class User extends BaseEntity {
   cover: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: ERole,
     nullable: true,
-    default: ERole.Advertiser
+    default: ERole.Advertiser,
   })
   @IsNotEmpty()
   role: ERole;
