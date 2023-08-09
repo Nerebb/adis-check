@@ -1,4 +1,4 @@
-import { Response, NextFunction, Request } from "express";
+import { Response, NextFunction, Request } from 'express';
 // import { ObjectSchema } from "yup";
 // import { HttpCode } from "../utils/httpCode";
 // import { ReasonPhrases } from "../utils/reasonPhrases";
@@ -20,12 +20,12 @@ import { Response, NextFunction, Request } from "express";
 // }
 
 export enum EKeyHeader {
-  REFRESH_TOKEN = "x-rtoken-id",
-  ACCESS_TOKEN = "x-atoken-id",
+  REFRESH_TOKEN = 'x-rtoken-id',
+  ACCESS_TOKEN = 'x-atoken-id',
 }
 
 export const catchError =
-  (fun: any) => (req: Request, res: Response, next: NextFunction) =>
+  (fun) => (req: Request, res: Response, next: NextFunction) =>
     Promise.resolve(fun(req, res, next)).catch(next);
 
 // check data in request
