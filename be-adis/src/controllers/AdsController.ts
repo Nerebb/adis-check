@@ -1,4 +1,4 @@
-import { Ads } from '../models/entities/Ads';
+import { Ads, EStatus } from '../models/entities/Ads';
 import {
   BadRequestError,
   CreatedResponse,
@@ -8,7 +8,7 @@ import {
 import adsRepository from '../models/repositories/ads.repository';
 import { Request, Response } from 'express';
 import categoryRepository from '../models/repositories/category.repository';
-
+// import { Like } from 'typeorm';
 class AdsController {
   static createAds = async (req: Request, res: Response) => {
     const { categoryId, ...other } = req.body;
@@ -80,6 +80,42 @@ class AdsController {
       .skip((page - 1) * limit)
       .take(limit)
       .getMany();
+
+    new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+  };
+
+  static detail = async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id, 10);
+
+    if (!id) throw new BadRequestError('must have id');
+
+    const adsDb = await adsRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+
+    adsDb.view += 1;
+
+    await adsDb.save();
+
+    new SuccessResponse({ message: 'find Ads', data: adsDb }).send(res);
+  };
+
+  static updateStatus = async (req: Request, res: Response) => {
+    const { id, status } = req.body;
+
+    if (
+      status !== EStatus.active ||
+      status !== EStatus.pending ||
+      status !== EStatus.shutOff
+    )
+      throw new BadRequestError('Request invalidate');
+
+    if (!parseInt(id, 10)) throw new BadRequestError('must have id');
+
+    const result = await adsRepository.update(parseInt(id, 10), {
+      status,
+    });
 
     new SuccessResponse({ message: 'find Ads', data: result }).send(res);
   };

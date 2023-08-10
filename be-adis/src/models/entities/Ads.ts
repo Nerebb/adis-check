@@ -6,9 +6,11 @@ import {
   UpdateDateColumn,
   ManyToOne,
   BaseEntity,
+  Index,
 } from 'typeorm';
 import { Category } from './Category';
 import { User } from './User';
+// import { User } from './User';
 
 export enum EType {
   sport = 'sport',
@@ -16,12 +18,24 @@ export enum EType {
   Sports = 'Sports',
 }
 
+export enum EStatus {
+  pending = 'pending',
+  active = 'active',
+  shutOff = 'shutOff',
+}
+
+export enum ECondition {
+  new = 'new',
+  old = 'old',
+}
+
 @Entity()
+@Index('ad_title', ['ad_title'])
 export class Ads extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar' })
   ad_title: string;
 
   @ManyToOne(() => Category, (category) => category.ads)
@@ -57,14 +71,17 @@ export class Ads extends BaseEntity {
   @Column({ type: 'decimal' })
   price: number;
 
-  @Column({ type: 'varchar', nullable: true })
-  condition: 'New' | 'Old';
+  @Column({ type: 'enum', enum: ECondition, nullable: true })
+  condition: ECondition;
 
-  @Column({ type: 'array' })
+  @Column({ type: 'simple-array' })
   images: string[];
 
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
+  @Column({ type: 'enum', enum: EStatus, default: EStatus.active })
+  status: EStatus;
+
+  @Column({ type: 'int', default: 0 })
+  view: number;
 
   @Column({ type: 'text' })
   description: string;

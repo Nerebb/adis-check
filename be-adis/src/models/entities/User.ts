@@ -6,10 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  OneToMany,
 } from 'typeorm';
 import { Length, IsNotEmpty } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
-import { OneToMany } from 'typeorm/browser';
 import { Ads } from './Ads';
 
 export enum Gender {
@@ -83,9 +83,6 @@ export class User extends BaseEntity {
   @IsNotEmpty()
   role: ERole;
 
-  @OneToMany(() => Ads, (ads) => ads.user)
-  ads: Ads[];
-
   @Column()
   @CreateDateColumn()
   createdAt: Date;
@@ -93,6 +90,9 @@ export class User extends BaseEntity {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Ads, (ads) => ads.user)
+  ads: Ads[];
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);
