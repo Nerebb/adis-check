@@ -15,11 +15,11 @@ import {
 class AuthController {
   static login = async (req: Request, res: Response) => {
     //Check if email and password are set
-    const { username, password } = req.body;
-    if (!(username && password))
+    const { email, password } = req.body;
+    if (!(email && password))
       throw new BadRequestError('AuthLogin: email or password not found');
 
-    const user = await userRepository.findOne({ where: { username } });
+    const user = await userRepository.findOne({ where: { email } });
     if (!user) throw new NotFoundError('AuthLogin: User not found');
 
     //Check if encrypted password match
