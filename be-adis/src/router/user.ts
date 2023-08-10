@@ -11,4 +11,6 @@ router.put('/update', isAuthenticated, catchError(UserController.update));
 
 router.get('/me', isAuthenticated, catchError(UserController.getProfile));
 
+router.post('/recover', catchError(UserController.passwordRecovery))
+
 export default router;

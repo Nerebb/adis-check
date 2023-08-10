@@ -12,6 +12,10 @@ const axiosApi = {
     const url = BASE_API + "/user/register";
     return axiosClient.post(url, allowedField);
   },
+  recover: (email) => {
+    const url = BASE_API + "/user/recover";
+    return axiosClient.post(url, { email });
+  },
 };
 
 export default axiosApi;
