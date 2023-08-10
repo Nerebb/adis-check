@@ -10,6 +10,7 @@ import { AppError, NotFoundError, SuccessResponse } from './helpers/utils';
 import { HttpCode } from './utils/httpCode';
 import { Database } from './db/Database';
 import config from './config';
+import { NextFunction } from 'connect';
 
 // establish database connection
 Database.getInstance().initialize();
@@ -35,7 +36,9 @@ app.use((_res, _req, next) => {
 });
 
 app.use(
-  (err: AppError, _req: Request, res: Response): void => {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  //Note: required param Next to response Error
+  (err: AppError, _req: Request, res: Response, next: NextFunction): void => {
     console.log('ERROR', err);
     new SuccessResponse({
       success: false,

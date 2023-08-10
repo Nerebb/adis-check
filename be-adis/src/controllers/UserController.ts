@@ -12,7 +12,6 @@ import {
 import { HttpCode } from '../utils/httpCode';
 import { User } from '@/models/entities/User';
 
-
 type TUpdateUser = Partial<
   Pick<
     User,
@@ -99,11 +98,28 @@ class UserController {
     const userProfile = await userRepository.findOne({
       where: { id, username },
     });
-    const {...responseData } = userProfile;
+    const { ...responseData } = userProfile;
 
     return new SuccessResponse({
       data: responseData,
       message: 'Get user profile successfully',
+    }).send(res);
+  };
+
+  static passwordRecovery = async (req: Request, res: Response) => {
+    //CheckValidField
+    const { email } = req.body;
+    if (!email) throw new BadRequestError('PasswordRecovery: Invalid email');
+
+    //Find user by email
+    const user = await userRepository.findOne({ where: { email } });
+    if (!user) throw new NotFoundError('PasswordRecovery: User not found');
+
+    //Sent to email
+
+    //Response
+    return new SuccessResponse({
+      message: 'Password has been sent to your registered email',
     }).send(res);
   };
 }
