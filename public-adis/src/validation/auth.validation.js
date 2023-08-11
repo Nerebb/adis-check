@@ -27,7 +27,13 @@ export const signUpSchema = yup.object({
       "Password must at least 6 non-whitespace characters"
     ),
   phone: yup.string().max(10),
-  username: yup.string().matches(passwordRegex).required(),
+  username: yup
+    .string()
+    .matches(
+      passwordRegex,
+      "Username must at least 6 non-whitespace characters"
+    )
+    .required(),
   confirmPassword: yup
     .string()
     .oneOf(
