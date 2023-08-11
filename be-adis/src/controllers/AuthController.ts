@@ -17,14 +17,14 @@ class AuthController {
     //Check if email and password are set
     const { email, password } = req.body;
     if (!(email && password))
-      throw new BadRequestError('AuthLogin: email or password not found');
+      throw new BadRequestError('Email or password not found');
 
     const user = await userRepository.findOne({ where: { email } });
-    if (!user) throw new NotFoundError('AuthLogin: User not found');
+    if (!user) throw new NotFoundError('User not found');
 
     //Check if encrypted password match
     if (!user.checkIfUnencryptedPasswordIsValid(password))
-      throw new NotAuthorizedError('AuthLogin: email or password incorrect');
+      throw new NotAuthorizedError('Email or password incorrect');
 
     //Sing JWT, valid for 1 hour
     const token = jwt.sign(
