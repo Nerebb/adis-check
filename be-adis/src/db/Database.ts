@@ -1,6 +1,11 @@
 import { User } from '../models/entities/User';
 import config from '../config';
 import { DataSource } from 'typeorm';
+import { Ads } from '../models/entities/Ads';
+import { Category } from '../models/entities/Category';
+import { City } from '../models/entities/City';
+import { Country } from '../models/entities/Country';
+import { State } from '../models/entities/State';
 
 export class Database {
   private static instance: DataSource;
@@ -20,7 +25,8 @@ export class Database {
         synchronize: true,
         logging: true,
         migrations: [],
-        entities: [User],
+
+        entities: [User, Ads, Category, City, State, Country],
       });
     }
 

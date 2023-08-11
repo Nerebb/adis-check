@@ -1,7 +1,7 @@
-// import { Category } from "../Categories";
+import { Category } from '../entities/Category';
 
-// import DataSource from "../../../ormconfig";
+import { Database } from '../../db/Database';
 
-// const categoryRepository = DataSource.getRepository(Category);
+const categoryRepository = Database.getInstance().getRepository(Category);
 
-// export default categoryRepository;
+export default categoryRepository;

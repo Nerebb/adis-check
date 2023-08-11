@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import http from 'http';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -10,16 +10,17 @@ import { AppError, NotFoundError, SuccessResponse } from './helpers/utils';
 import { HttpCode } from './utils/httpCode';
 import { Database } from './db/Database';
 import config from './config';
-import { NextFunction } from 'connect';
 
 // establish database connection
 Database.getInstance().initialize();
 
 const apiRoot = '/api';
+
 const app = express();
 app.use(express.json());
 app.use(
   cors({
+    origin: '*',
     credentials: true,
   })
 );
@@ -37,8 +38,7 @@ app.use((_res, _req, next) => {
 
 app.use(
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  //Note: required param Next to response Error
-  (err: AppError, _req: Request, res: Response, next: NextFunction): void => {
+  (err: AppError, _req: Request, res: Response, _next: NextFunction): void => {
     console.log('ERROR', err);
     new SuccessResponse({
       success: false,

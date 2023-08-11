@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { validate } from 'class-validator';
 
-import { User } from '@/models/entities/User';
+import { User } from '../models/entities/User';
 import config from '../config';
 import { userRepository } from '../models/repositories/user.repository';
 import {
