@@ -109,11 +109,11 @@ class UserController {
   static passwordRecovery = async (req: Request, res: Response) => {
     //CheckValidField
     const { email } = req.body;
-    if (!email) throw new BadRequestError('PasswordRecovery: Invalid email');
+    if (!email) throw new BadRequestError('Invalid email');
 
     //Find user by email
     const user = await userRepository.findOne({ where: { email } });
-    if (!user) throw new NotFoundError('PasswordRecovery: User not found');
+    if (!user) throw new NotFoundError('Email not found');
 
     //Sent to email
 
