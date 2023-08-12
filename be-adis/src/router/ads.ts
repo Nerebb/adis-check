@@ -28,6 +28,15 @@ router.put(
   catchError(AdsController.updateAds)
 );
 
+router.patch(
+  '/status/:id',
+  isAuthenticated,
+  isAdvertiser,
+  catchError(AdsController.updateStatus)
+);
+
+router.get('/status/:id', catchError(AdsController.updateStatusByAdmin));
+
 router.get(
   '/category/:id',
   validateRequest(getAdsByCategorySchema),
@@ -42,11 +51,11 @@ router.get(
 
 router.get('/detail/:id', catchError(AdsController.detail));
 
-router.post(
-  '/status/:id',
+router.get(
+  '/advertiser/',
   isAuthenticated,
   isAdvertiser,
-  catchError(AdsController.updateStatus)
+  catchError(AdsController.getByAdvertiser)
 );
 
 export default router;

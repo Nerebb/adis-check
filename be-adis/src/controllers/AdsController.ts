@@ -25,11 +25,17 @@ class AdsController {
 
     const ads = adsRepository.create({
       userId,
+      category_name: category.category,
       ...(req.body as Ads),
     });
     await ads.save();
 
-    new CreatedResponse({ message: 'Create Ads', data: ads }).send(res);
+    // todo send email
+    new CreatedResponse({
+      message:
+        'Create Ads success,We will review the valid ads and confirm the fastest',
+      data: ads,
+    }).send(res);
   };
 
   static updateAds = async (req: Request, res: Response) => {
@@ -39,9 +45,18 @@ class AdsController {
       throw new BadRequestError('Params have id');
     }
 
-    const result = await adsRepository.update(id, data);
+    const result = await adsRepository.update(id, {
+      ...data,
+      isValid: false,
+      status: EStatus.pending,
+    });
 
-    new SuccessResponse({ message: 'Update Ads', data: result }).send(res);
+    // todo send email
+    new SuccessResponse({
+      message:
+        'Update Ads success, We will review the valid ads and confirm the fastest',
+      data: result,
+    }).send(res);
   };
 
   static findByCategory = async (req: Request, res: Response) => {
@@ -56,7 +71,7 @@ class AdsController {
       throw new BadRequestError('Limit less than 40');
     }
 
-    const result = await adsRepository.find({
+    const result = await adsRepository.findAndCount({
       where: { categoryId, status: EStatus.active },
       skip: (page - 1) * limit,
       take: limit,
@@ -67,32 +82,61 @@ class AdsController {
 
   static findByKeyword = async (req: Request, res: Response) => {
     const searchTitle = req.query.q || '';
+    const categoryId = parseInt(req.query.categoryId as string, 10);
 
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || 20;
 
-    if (searchTitle) {
-      console.log(searchTitle);
-      const result = await adsRepository.find({
-        where: {
-          ad_title: Like(`%${searchTitle}%`),
-          status: EStatus.active,
-        },
-        skip: (page - 1) * limit,
-        take: limit,
-      });
+    if (categoryId !== 0) {
+      if (searchTitle) {
+        const result = await adsRepository.findAndCount({
+          where: {
+            ad_title: Like(`%${searchTitle}%`),
+            status: EStatus.active,
+            categoryId,
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        });
 
-      new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+        new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+      } else {
+        const result = await adsRepository.findAndCount({
+          where: { categoryId, status: EStatus.active },
+          skip: (page - 1) * limit,
+          take: limit,
+        });
+        new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+      }
     } else {
-      const result = await adsRepository.find();
-      new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+      if (searchTitle) {
+        console.log(searchTitle);
+        const result = await adsRepository.findAndCount({
+          where: {
+            ad_title: Like(`%${searchTitle}%`),
+            status: EStatus.active,
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        });
+
+        new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+      } else {
+        console.log(searchTitle);
+        const result = await adsRepository.findAndCount({
+          where: { status: EStatus.active },
+          skip: (page - 1) * limit,
+          take: limit,
+        });
+        new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+      }
     }
   };
 
   static detail = async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
 
-    if (!id) throw new BadRequestError('must have id');
+    if (!id) throw new BadRequestError('Must have id');
 
     const adsDb = await adsRepository.findOne({
       where: { id, status: EStatus.active },
@@ -105,7 +149,7 @@ class AdsController {
 
     adsDb.user.password = '';
 
-    new SuccessResponse({ message: 'find Ads', data: adsDb }).send(res);
+    new SuccessResponse({ message: 'Find detail Ads', data: adsDb }).send(res);
   };
 
   static updateStatus = async (req: Request, res: Response) => {
@@ -114,23 +158,62 @@ class AdsController {
 
     if (!id) throw new BadRequestError('must have id');
 
-    if (
-      status !== EStatus.active ||
-      status !== EStatus.pending ||
-      status !== EStatus.shutOff
-    )
+    if (status !== EStatus.active && status !== EStatus.shutOff)
       throw new BadRequestError('Request invalidate');
 
-    const result = await adsRepository.update(id, {
-      status,
-    });
+    const result = await adsRepository.update(
+      { isValid: true },
+      {
+        status,
+      }
+    );
 
-    new SuccessResponse({ message: 'find Ads', data: result }).send(res);
+    new SuccessResponse({ message: 'Update Ads', data: result }).send(res);
   };
 
-  getByAdvertiser = async (req: Request, res: Response) => {
+  static getByAdvertiser = async (req: Request, res: Response) => {
+    const q = req.query.q;
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || 20;
+
+    const { id } = res.locals.userId;
+    let result: [Ads[], number] | null = null;
+    if (q) {
+      result = await adsRepository.findAndCount({
+        where: { userId: id, ad_title: Like(`%${q}%`) },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+    } else {
+      result = await adsRepository.findAndCount({
+        where: { userId: id },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+    }
+
+    new SuccessResponse({ message: 'Get my Ads', data: result }).send(res);
+  };
+
+  static updateStatusByAdmin = async (req: Request, res: Response) => {
+    const status = req.query.status as string;
+    const categoryId = req.query.categoryId as string;
+
+    if (status !== EStatus.active && status !== EStatus.decline) {
+      throw new BadRequestError('Request invalidate');
+    }
+
+    const result = await adsRepository.update(categoryId, {
+      status,
+      isValid: true,
+    });
+
+    // todo send email
+    new SuccessResponse({
+      message: 'Update status Success',
+      data: result,
+    }).send(res);
   };
 }
+
 export default AdsController;
