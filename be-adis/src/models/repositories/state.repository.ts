@@ -1,7 +1,9 @@
 import { State } from '../entities/State';
 
-import { Database } from '../../db/Database';
+import dataSource from '../../../data-source';
 
-const stateRepository = Database.getInstance().getRepository(State);
+const stateRepository = dataSource.getRepository(State);
+
+// const stateRepository = Database.getInstance().getRepository(State);
 
 export default stateRepository;

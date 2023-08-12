@@ -42,17 +42,16 @@ export const updateAdsSchema = yup.object({
 
 export const getAdsByCategorySchema = yup.object({
   query: yup.object({
-    categoryId: yup.number().integer().min(1).required(),
-    page: yup.number().integer().min(1).required(),
-    limit: yup.number().integer().min(1).required(),
+    page: yup.number().integer().min(1).default(1).required(),
+    limit: yup.number().integer().min(1).default(10).required(),
   }),
 });
 
 export const getAdsBySearchSchema = yup.object({
   query: yup.object({
-    q: yup.number().integer().min(1).notRequired(),
-    page: yup.number().integer().min(1).required(),
-    limit: yup.number().integer().min(1).required(),
+    q: yup.string().notRequired(),
+    page: yup.number().integer().min(1).default(1).required(),
+    limit: yup.number().integer().min(1).default(10).required(),
   }),
 });
 

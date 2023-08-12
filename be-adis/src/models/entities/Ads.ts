@@ -30,11 +30,11 @@ export enum ECondition {
 }
 
 @Entity()
-@Index('ad_title', ['ad_title'])
 export class Ads extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index({ fulltext: true })
   @Column({ type: 'varchar' })
   ad_title: string;
 

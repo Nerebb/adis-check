@@ -11,7 +11,7 @@ import { Ads } from './Ads';
 
 /// admin tạo thể loại
 // chỉ có admin quyền tạo
-@Entity()
+@Entity('category')
 export class Category extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
