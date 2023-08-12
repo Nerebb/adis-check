@@ -19,4 +19,6 @@ export default {
       ? parseInt(process.env.CONFIRMATION_EMAIL)
       : false,
   },
+  SG_API_KEY: process.env.SG_API_KEY ?? '',
+  SG_SENDER: process.env.SG_SENDER ?? 'trunghieu186@gmail.com'
 };

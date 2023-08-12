@@ -2,17 +2,17 @@ POST http://localhost:8080/api/user/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "hieuhoangbt",
-    "email": "trunghieu186@gmail.com",
+    "username": "hieuhoangbt7",
+    "email": "facedev1806@gmail.com",
     "password": "password",
     "phone": "+84368306484"
 }
 
 
-POST http://localhost:8080/api/auth/login HTTP/1.1
-content-type: application/json
+# POST http://localhost:8080/api/auth/login HTTP/1.1
+# content-type: application/json
 
-{
-    "username": "hieuhoangbt",
-    "password": "password"
-}
+# {
+#     "username": "hieuhoangbt",
+#     "password": "password"
+# }
