@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
+import { useAuth } from "../../context/authContext";
 import { signUpSchema } from "../../validation/auth.validation";
-import axiosApi from "../../app/axiosApi";
 import { LoadingSpinner } from "../constants/LoadingSpinner";
 
 const initialValues = {
@@ -14,21 +14,25 @@ const initialValues = {
 };
 
 export const SignUpForm = () => {
+  const { signUp } = useAuth();
   const [formMessage, setFormMessage] = useState("");
   const formik = useFormik({
     initialValues,
     validationSchema: signUpSchema,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
-        //Debounce
         setSubmitting(true);
+        setFormMessage("");
+        //Debounce
         await new Promise((_) => setTimeout(_, 2000));
 
-        await axiosApi.register({
-          email: values.email,
-          password: values.password,
-          phone: values.phone,
-          username: values.username,
+        await signUp(values, async (response) => {
+          if (response && response.message) {
+            setFormMessage("Registered successfully, redirect to login form");
+            resetForm();
+            await new Promise((_) => setTimeout(_, 1000));
+            window.location.reload();
+          }
         });
       } catch (error) {
         setSubmitting(false);

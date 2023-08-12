@@ -9,6 +9,7 @@ export const isAuthenticated = async (
   _next: NextFunction
 ) => {
   const sessionToken = req.cookies['ADIS-AUTH'] || req.headers.accessToken;
+  console.log("🚀 ~ file: isAuthenticated.ts:12 ~ sessionToken:", sessionToken)
 
   try {
     const userDecoded = jwt.verify(sessionToken, config.AUTH.jwtSecret);

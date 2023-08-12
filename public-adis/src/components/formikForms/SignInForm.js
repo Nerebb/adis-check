@@ -1,18 +1,17 @@
 import { useFormik } from "formik";
-import axiosApi from "../../app/axiosApi";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext";
 import { signInSchema } from "../../validation/auth.validation";
 import { LoadingSpinner } from "../constants/LoadingSpinner";
+import { BASE_URL } from "../../app/config";
 
 const SignInForm = ({ email }) => {
   const [formMessage, setFormMessage] = useState("");
-  const navigate = useNavigate();
-
+  const { signIn } = useAuth();
   const initialValues = {
     email: email ?? "facedev1806@gmail.com",
     password: "password",
-    rememberme: false,
+    rememberme: true,
   };
 
   const formik = useFormik({
@@ -25,20 +24,25 @@ const SignInForm = ({ email }) => {
       //Debounce
       await new Promise((_) => setTimeout(_, 2000));
       try {
-        //Request database
-        const response = await axiosApi.login({
-          email: values.email,
-          password: values.password,
-        });
+        await signIn(
+          {
+            email: values.email,
+            password: values.password,
+            rememberme: values.rememberme,
+          },
+          //ResponseCallback
+          async (response) => {
+            setSubmitting(false);
+            if (response && response.data) {
+              setFormMessage("Login success redirecting to Dashboard...");
+              await new Promise((_) => setTimeout(_, 1000));
 
-        //Response
-        setSubmitting(false);
-        if (response && response.data) {
-          setFormMessage("Login success redirecting to Dashboard...");
-
-          // navigate("/dashboard", { replace: true });
-        }
+              // window.location.replace(BASE_URL + "/dashboard");
+            }
+          }
+        );
       } catch (error) {
+        console.log("🚀 ~ file: SignInForm.js:44 ~ onSubmit: ~ error:", error);
         setSubmitting(false);
         setFormMessage(
           error.message ?? "Login failed: Unknown error - Please tryagain"

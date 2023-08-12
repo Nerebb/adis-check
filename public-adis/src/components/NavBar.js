@@ -1,7 +1,9 @@
 import React from "react";
 import TopBar, { TopBar2 } from "./TopBar";
+import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
+  const { user } = useAuth();
   return (
     <div className="background-header">
       <TopBar />
@@ -10,7 +12,11 @@ const Navbar = () => {
           <nav className="navbar navbar-expand-lg justify-content-between nav-color zeropadd">
             <div className="navbar-header">
               <a className="navbar-brand zeropadd" href="/">
-                <img src="img/logo_200x200.png" alt="logo" className="max-width-60px" />
+                <img
+                  src="img/logo_200x200.png"
+                  alt="logo"
+                  className="max-width-60px"
+                />
               </a>
               <button
                 className="navbar-toggler"
@@ -24,7 +30,10 @@ const Navbar = () => {
                 <span className="navbar-toggler-icon"></span>
               </button>
             </div>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <div
+              className="collapse navbar-collapse"
+              id="navbarSupportedContent"
+            >
               <ul className="nav navbar-nav ml-auto">
                 <NavItem link="/" label="Inicio" isActive={true} />
                 <NavItem link="/category" label="Búsqueda avanzada" />
@@ -53,7 +62,15 @@ const Navbar = () => {
                 </NavDropdown>
 
                 <NavItem link="/contactus" label="Contáctanos" />
-                <NavItem link="/loginRegister" label={<><i className="fa fa-user" aria-hidden="true"></i> Login /Registro</>} />
+                <NavItem
+                  link="/loginRegister"
+                  label={
+                    <>
+                      <i className="fa fa-user" aria-hidden="true"></i>
+                      <span>{user.username ?? "Login/Registro"}</span>
+                    </>
+                  }
+                />
                 <NavAd link="/postad" label="Anuncia Gratis" />
               </ul>
             </div>
@@ -65,6 +82,7 @@ const Navbar = () => {
 };
 
 export const Navbar2 = () => {
+  const { user } = useAuth();
   return (
     <div className="background-header">
       <TopBar2 />
@@ -73,7 +91,11 @@ export const Navbar2 = () => {
           <nav className="navbar navbar-expand-lg justify-content-between nav-color zeropadd">
             <div className="navbar-header">
               <a className="navbar-brand zeropadd" href="/">
-                <img src="img/logo_200x200.png" alt="logo" className="max-width-60px" />
+                <img
+                  src="img/logo_200x200.png"
+                  alt="logo"
+                  className="max-width-60px"
+                />
               </a>
               <button
                 className="navbar-toggler"
@@ -87,7 +109,10 @@ export const Navbar2 = () => {
                 <span className="navbar-toggler-icon"></span>
               </button>
             </div>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <div
+              className="collapse navbar-collapse"
+              id="navbarSupportedContent"
+            >
               <ul className="nav navbar-nav ml-auto">
                 <NavItem link="/" label="Home" isActive={true} />
                 <NavItem link="/category" label="Advance Search" />
@@ -116,7 +141,15 @@ export const Navbar2 = () => {
                 </NavDropdown>
 
                 <NavItem link="/contactus" label="Contact Us" />
-                <NavItem link="/loginRegister" label={<><i className="fa fa-user" aria-hidden="true"></i> Login / Register</>} />
+                <NavItem
+                  link="/loginRegister"
+                  label={
+                    <>
+                      <i className="fa fa-user" aria-hidden="true"></i>
+                      <span>{user.username ?? "Login/Registro"}</span>
+                    </>
+                  }
+                />
                 <NavAd link="/postad" label="Post Free Ad" />
               </ul>
             </div>
@@ -127,11 +160,9 @@ export const Navbar2 = () => {
   );
 };
 
-
-
 const NavItem = ({ link, label, isActive }) => {
   return (
-    <li className={`nav-item${isActive ? ' active' : ''}`}>
+    <li className={`nav-item${isActive ? " active" : ""}`}>
       <a className="nav-link" href={link}>
         {label}
         {isActive && <span className="sr-only">(current)</span>}
@@ -140,28 +171,30 @@ const NavItem = ({ link, label, isActive }) => {
   );
 };
 
-
-
 const NavAd = ({ link, label, isActive }) => {
-    return (
-      <li className={`nav-item bordering ${isActive ? ' active' : ''}`}>
-        <a className="nav-link" href={link}>
-          {label}
-          {isActive && <span className="sr-only">(current)</span>}
-        </a>
-      </li>
-    );
-  };
+  return (
+    <li className={`nav-item bordering ${isActive ? " active" : ""}`}>
+      <a className="nav-link" href={link}>
+        {label}
+        {isActive && <span className="sr-only">(current)</span>}
+      </a>
+    </li>
+  );
+};
 
 const NavDropdown = ({ label, children }) => {
   return (
     <li className="nav-item dropdown">
-      <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" className="nav-link dropdown-toggle">
+      <a
+        href="#"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        className="nav-link dropdown-toggle"
+      >
         {label} <i className="fa fa-angle-down"></i>
       </a>
-      <ul className="dropdown-menu border-0 shadow">
-        {children}
-      </ul>
+      <ul className="dropdown-menu border-0 shadow">{children}</ul>
     </li>
   );
 };
@@ -170,12 +203,17 @@ const NavDropdownItem = ({ link, label, children }) => {
   if (children) {
     return (
       <li className="dropdown-submenu">
-        <a href={link} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" className="dropdown-item dropdown-toggle">
+        <a
+          href={link}
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          className="dropdown-item dropdown-toggle"
+        >
           {label}
         </a>
-        <ul className="dropdown-menu border-0 shadow">
-          {children}
-        </ul>
+        <ul className="dropdown-menu border-0 shadow">{children}</ul>
       </li>
     );
   } else {

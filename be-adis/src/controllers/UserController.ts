@@ -59,7 +59,7 @@ class UserController {
 
     return new CreatedResponse({
       statusCode: HttpCode.CREATED,
-      data: user,
+      // data: user,
       message: 'Registered successfully!',
     }).send(res);
   };

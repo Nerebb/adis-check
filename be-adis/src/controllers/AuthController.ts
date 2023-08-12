@@ -35,9 +35,19 @@ class AuthController {
 
     res.cookie('ADIS-AUTH', token, { domain: 'localhost', path: '/' });
 
+    //Santinize Response
+    const responseData = {
+      token,
+      user: {
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+      }
+    }
+
     //Send the jwt in the response
     return new SuccessResponse({
-      data: token,
+      data: responseData,
       message: 'User login successfully',
     }).send(res);
   };
