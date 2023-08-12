@@ -6,9 +6,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  OneToMany,
 } from 'typeorm';
 import { Length, IsNotEmpty } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
+import { Ads } from './Ads';
 
 export enum Gender {
   Male = 'Male',
@@ -88,6 +90,9 @@ export class User extends BaseEntity {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Ads, (ads) => ads.user)
+  ads: Ads[];
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);

@@ -10,7 +10,7 @@ import {
   SuccessResponse,
 } from '../helpers/utils';
 import { HttpCode } from '../utils/httpCode';
-import { User } from '@/models/entities/User';
+import { User } from '../models/entities/User';
 import sendMail from '../utils/sendMail';
 import config from '../config';
 
