@@ -22,6 +22,7 @@ export enum EStatus {
   pending = 'pending',
   active = 'active',
   shutOff = 'shutOff',
+  decline = 'decline',
 }
 
 export enum ECondition {
@@ -40,6 +41,9 @@ export class Ads extends BaseEntity {
 
   @ManyToOne(() => Category, (category) => category.ads)
   category: Category;
+
+  @Column()
+  category_name: string;
 
   @Column()
   categoryId: number;
@@ -85,6 +89,9 @@ export class Ads extends BaseEntity {
 
   @Column({ type: 'text' })
   description: string;
+
+  @Column({ type: 'boolean', default: false })
+  isValid: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.get('/countries', catchError(LocationController.findCountries));
 
-router.get('/cites', catchError(LocationController.findCities));
+router.get('/cites/:id', catchError(LocationController.findCities));
 
-router.get('/states', catchError(LocationController.findStates));
+router.get('/states/id  ', catchError(LocationController.findStates));
 
 export default router;
