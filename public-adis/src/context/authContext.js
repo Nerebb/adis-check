@@ -1,24 +1,12 @@
 import { useContext, useEffect, useReducer } from "react";
-import { AuthContext } from ".";
+import { AuthContext, initAuthState } from ".";
 import axiosApi from "../app/axiosApi";
 import { isValidToken, setToken } from "../utils/jwtToken";
-import axios from "axios";
-import axiosClient from "../app/axiosClient";
-
-const initState = {
-  user: {
-    userId: undefined,
-    username: undefined,
-    email: undefined,
-  },
-  isAuthenticated: false,
-  isInitialize: false,
-};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useReducer((prev, next) => {
     return { ...prev, ...next };
-  }, initState);
+  }, initAuthState);
 
   useEffect(() => {
     async function initialize() {
@@ -28,9 +16,25 @@ export function AuthProvider({ children }) {
           setToken(accessToken);
           const response = await axiosApi.getProfile();
 
-          // setUser
+          if (response && response.data) {
+            const {
+              data: { token, ...user },
+            } = response;
+            setUser({
+              user,
+              isAuthenticated: true,
+              isInitialize: true,
+            });
+          }
+        } else {
+          setUser({ isInitialize: true });
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log("AuthError", error);
+
+        setToken(null);
+        setUser(initAuthState);
+      }
     }
 
     initialize();
@@ -39,7 +43,10 @@ export function AuthProvider({ children }) {
   async function signIn({ email, password, rememberme }, callback) {
     const response = await axiosApi.login({ email, password });
     if (rememberme) setToken(response.data.token);
-    setUser({ isAuthenticated: true });
+    setUser({
+      user: response.data.user,
+      isAuthenticated: true,
+    });
 
     await callback(response);
     return response;
@@ -58,7 +65,7 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     setToken(null);
-    setUser(initState);
+    setUser(initAuthState);
   }
 
   return (

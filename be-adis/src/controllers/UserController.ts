@@ -5,7 +5,6 @@ import {
   BadRequestError,
   CreatedResponse,
   DuplicateError,
-  NotAuthorizedError,
   NotFoundError,
   SuccessResponse,
 } from '../helpers/utils';
@@ -64,16 +63,12 @@ class UserController {
     }).send(res);
   };
 
-  static update = async (req: Request, res: Response) => {
-    //Check is login
-    if (!res.locals.jwtPayload)
-      throw new NotAuthorizedError('UpdateUser: Not authorized');
-
+  static updateProfile = async (req: Request, res: Response) => {
     //Get userId from JWT
-    const { userId: id, username } = res.locals.jwtPayload;
+    const { userId: id, email } = res.locals.user;
 
     //Check if valid
-    const curUser = await userRepository.findOne({ where: { id, username } });
+    const curUser = await userRepository.findOne({ where: { id, email } });
     if (!curUser) throw new NotFoundError('UpdateUser: User not found');
 
     //Update user
@@ -88,17 +83,14 @@ class UserController {
   };
 
   static getProfile = async (req: Request, res: Response) => {
-    //Check is login
-    if (!res.locals.jwtPayload)
-      throw new NotAuthorizedError('UpdateUser: Not authorized');
-
     //Get userId from JWT
-    const { userId: id, username } = res.locals.jwtPayload;
+    const { userId: id, email } = res.locals.user;
 
     const userProfile = await userRepository.findOne({
-      where: { id, username },
+      where: { id, email },
     });
-    const { ...responseData } = userProfile;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...responseData } = userProfile;
 
     return new SuccessResponse({
       data: responseData,

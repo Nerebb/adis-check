@@ -4,12 +4,10 @@ import { catchError, validateRequest } from '../middleware/validate';
 import express from 'express';
 import { isAdvertiser } from '../middleware/isAuthorized';
 import {
-  createCategorySchema,
-  updateCategorySchema,
-} from '../validations/category.validation';
-import {
+  createAdsSchema,
   getAdsByCategorySchema,
   getAdsBySearchSchema,
+  updateAdsSchema,
 } from '../validations/ads.validation';
 
 const router = express.Router();
@@ -18,7 +16,7 @@ router.post(
   '/',
   isAuthenticated,
   isAdvertiser,
-  validateRequest(createCategorySchema),
+  validateRequest(createAdsSchema),
   catchError(AdsController.createAds)
 );
 
@@ -26,7 +24,7 @@ router.put(
   '/:id',
   isAuthenticated,
   isAdvertiser,
-  validateRequest(updateCategorySchema),
+  validateRequest(updateAdsSchema),
   catchError(AdsController.updateAds)
 );
 
@@ -40,6 +38,15 @@ router.get(
   '/',
   validateRequest(getAdsBySearchSchema),
   catchError(AdsController.findByKeyword)
+);
+
+router.get('/detail/:id', catchError(AdsController.detail));
+
+router.post(
+  '/status/:id',
+  isAuthenticated,
+  isAdvertiser,
+  catchError(AdsController.updateStatus)
 );
 
 export default router;

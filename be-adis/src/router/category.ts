@@ -6,12 +6,12 @@ import { isAuthenticated } from '../middleware/isAuthenticated';
 
 const router = express.Router();
 
-router.post(
-  '/',
-  isAdvertiser,
-  isAuthenticated,
-  catchError(CategoryController.createCategory)
-);
+// router.post(
+//   '/',
+//   isAdvertiser,
+//   isAuthenticated,
+//   catchError(CategoryController.createCategory)
+// );
 
 router.put(
   '/:id',

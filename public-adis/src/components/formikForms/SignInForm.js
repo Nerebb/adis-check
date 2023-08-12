@@ -1,13 +1,14 @@
 import { useFormik } from "formik";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { signInSchema } from "../../validation/auth.validation";
-import { LoadingSpinner } from "../constants/LoadingSpinner";
-import { BASE_URL } from "../../app/config";
+import { LoadingCircle } from "../constants/LoadingCircle";
 
 const SignInForm = ({ email }) => {
   const [formMessage, setFormMessage] = useState("");
   const { signIn } = useAuth();
+  const navigate = useNavigate();
   const initialValues = {
     email: email ?? "facedev1806@gmail.com",
     password: "password",
@@ -32,17 +33,17 @@ const SignInForm = ({ email }) => {
           },
           //ResponseCallback
           async (response) => {
+            console.log("🚀 ~ file: SignInForm.js:36 ~ response:", response);
             setSubmitting(false);
             if (response && response.data) {
               setFormMessage("Login success redirecting to Dashboard...");
               await new Promise((_) => setTimeout(_, 1000));
 
-              // window.location.replace(BASE_URL + "/dashboard");
+              navigate("/dashboard");
             }
           }
         );
       } catch (error) {
-        console.log("🚀 ~ file: SignInForm.js:44 ~ onSubmit: ~ error:", error);
         setSubmitting(false);
         setFormMessage(
           error.message ?? "Login failed: Unknown error - Please tryagain"
@@ -108,9 +109,10 @@ const SignInForm = ({ email }) => {
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 col-6 text-left text-sm-right text-lg-right text-md-right text-xl-right">
             <a
-              href="javascript:;"
+              href="/#"
               data-toggle="modal"
               data-target="#forgotPass"
+              onClick={(e) => e.preventDefault()}
             >
               Forgot Password?
             </a>
@@ -125,7 +127,7 @@ const SignInForm = ({ email }) => {
           disabled={formik.isSubmitting}
           style={{ position: "relative" }}
         >
-          {formik.isSubmitting ? <LoadingSpinner /> : "Sign In"}
+          {formik.isSubmitting ? <LoadingCircle /> : "Sign In"}
         </button>
         {formMessage && (
           <div

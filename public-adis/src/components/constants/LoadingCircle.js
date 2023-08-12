@@ -1,8 +1,8 @@
 import React from "react";
 
-export const LoadingSpinner = () => {
+export const LoadingCircle = () => {
   return (
-    <svg class="LoadingSpinner" viewBox="0 0 50 50">
+    <svg class="LoadingCircle" viewBox="0 0 50 50">
       <circle
         class="path"
         cx="25"

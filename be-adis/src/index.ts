@@ -8,11 +8,14 @@ import cors from 'cors';
 import router from './router/index';
 import { AppError, NotFoundError, SuccessResponse } from './helpers/utils';
 import { HttpCode } from './utils/httpCode';
-import { Database } from './db/Database';
+// import { Database } from './db/Database';
+import DataSource from '../data-source';
 import config from './config';
 
 // establish database connection
-Database.getInstance().initialize();
+DataSource.initialize()
+  .then(() => console.log('connect mysql successful'))
+  .catch((error) => console.log(error));
 
 const apiRoot = '/api';
 
