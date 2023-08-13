@@ -10,7 +10,8 @@ import {
 } from '../helpers/utils';
 import { HttpCode } from '../utils/httpCode';
 import { User } from '../models/entities/User';
-import sendMail from '../utils/sendMail';
+// import sendMail from '../utils/sendMail';
+import sendMail from '../utils/mailgun';
 import config from '../config';
 
 type TUpdateUser = Partial<
@@ -46,6 +47,15 @@ class UserController {
     if (user) {
       throw new DuplicateError('Username or email was registered!', 400);
     }
+
+    const r = await sendMail({
+      to: email,
+      from: `ADIS Support <${config.SG_SENDER}>`,
+      subject: 'Test email',
+      html: 'Test content',
+    });
+
+    console.log('r1', r);
 
     user = await userRepository.create({
       username,

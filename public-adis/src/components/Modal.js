@@ -18,7 +18,6 @@ const Modal = ({
 
   useEffect(() => {
     if (!isErr) {
-      console.log("CLICKED", isErr);
       buttonRef.current.click();
     }
   }, [isErr]);

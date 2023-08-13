@@ -12,8 +12,8 @@ export const OrmConfig: DataSourceOptions = {
   database: DB_NAME,
   synchronize: false,
   logging: true,
-  entities: ['src/models/entities/*.ts', 'dist/src/models/entities/*.js'],
-  migrations: ['src/migrations/*{.ts,.js}'],
+  entities: ['dist/src/models/entities/*.js'],
+  migrations: ['dist/src/migrations/*.js'],
 };
 
 const dataSource = new DataSource(OrmConfig);
