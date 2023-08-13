@@ -67,7 +67,10 @@ const Footer = () => {
                     </p>
                   </div>
                 </div>
-                <FooterSection title="Popular Categories" links={popularCategories} />
+                <FooterSection
+                  title="Popular Categories"
+                  links={popularCategories}
+                />
                 <FooterSection title="Location" links={locations} />
                 <FooterSection title="Important Links" links={importantLinks} />
               </div>

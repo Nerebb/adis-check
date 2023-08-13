@@ -1,18 +1,18 @@
 import { useFormik } from "formik";
-import axiosApi from "../../app/axiosApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext";
 import { signInSchema } from "../../validation/auth.validation";
-import { LoadingSpinner } from "../constants/LoadingSpinner";
+import { LoadingCircle } from "../constants/LoadingCircle";
 
 const SignInForm = ({ email }) => {
   const [formMessage, setFormMessage] = useState("");
+  const { signIn } = useAuth();
   const navigate = useNavigate();
-
   const initialValues = {
     email: email ?? "facedev1806@gmail.com",
     password: "password",
-    rememberme: false,
+    rememberme: true,
   };
 
   const formik = useFormik({
@@ -25,19 +25,24 @@ const SignInForm = ({ email }) => {
       //Debounce
       await new Promise((_) => setTimeout(_, 2000));
       try {
-        //Request database
-        const response = await axiosApi.login({
-          email: values.email,
-          password: values.password,
-        });
+        await signIn(
+          {
+            email: values.email,
+            password: values.password,
+            rememberme: values.rememberme,
+          },
+          //ResponseCallback
+          async (response) => {
+            console.log("🚀 ~ file: SignInForm.js:36 ~ response:", response);
+            setSubmitting(false);
+            if (response && response.data) {
+              setFormMessage("Login success redirecting to Dashboard...");
+              await new Promise((_) => setTimeout(_, 1000));
 
-        //Response
-        setSubmitting(false);
-        if (response && response.data) {
-          setFormMessage("Login success redirecting to Dashboard...");
-
-          // navigate("/dashboard", { replace: true });
-        }
+              navigate("/dashboard");
+            }
+          }
+        );
       } catch (error) {
         setSubmitting(false);
         setFormMessage(
@@ -104,9 +109,10 @@ const SignInForm = ({ email }) => {
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 col-6 text-left text-sm-right text-lg-right text-md-right text-xl-right">
             <a
-              href="javascript:;"
+              href="/#"
               data-toggle="modal"
               data-target="#forgotPass"
+              onClick={(e) => e.preventDefault()}
             >
               Forgot Password?
             </a>
@@ -121,7 +127,7 @@ const SignInForm = ({ email }) => {
           disabled={formik.isSubmitting}
           style={{ position: "relative" }}
         >
-          {formik.isSubmitting ? <LoadingSpinner /> : "Sign In"}
+          {formik.isSubmitting ? <LoadingCircle /> : "Sign In"}
         </button>
         {formMessage && (
           <div

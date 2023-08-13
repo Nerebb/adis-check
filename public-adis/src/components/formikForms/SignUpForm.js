@@ -1,8 +1,9 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
+import { useAuth } from "../../context/authContext";
 import { signUpSchema } from "../../validation/auth.validation";
-import axiosApi from "../../app/axiosApi";
-import { LoadingSpinner } from "../constants/LoadingSpinner";
+import { LoadingCircle } from "../constants/LoadingCircle";
+import { CusPhoneInput } from "./customField/CusPhoneInput";
 
 const initialValues = {
   email: "test@randomail",
@@ -14,23 +15,29 @@ const initialValues = {
 };
 
 export const SignUpForm = () => {
+  const { signUp } = useAuth();
   const [formMessage, setFormMessage] = useState("");
   const formik = useFormik({
     initialValues,
     validationSchema: signUpSchema,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      console.log("🚀 ~ file: SignUpForm.js:24 ~ onSubmit: ~ values:", values);
       try {
-        //Debounce
         setSubmitting(true);
+        setFormMessage("");
+        //Debounce
         await new Promise((_) => setTimeout(_, 2000));
 
-        await axiosApi.register({
-          email: values.email,
-          password: values.password,
-          phone: values.phone,
-          username: values.username,
+        await signUp(values, async (response) => {
+          if (response && response.message) {
+            setFormMessage("Registered successfully, redirect to login form");
+            resetForm();
+            await new Promise((_) => setTimeout(_, 1000));
+            window.location.reload();
+          }
         });
       } catch (error) {
+        console.log("🚀 ~ file: SignUpForm.js:39 ~ onSubmit: ~ error:", error);
         setSubmitting(false);
         setFormMessage(error.message ?? "Register failed please try again");
       }
@@ -83,25 +90,7 @@ export const SignUpForm = () => {
         )}
       </div>
       <div class="form-group">
-        <label class="font-weight-bold">Phone #</label>
-        <input
-          type="number"
-          inputMode="numeric"
-          name="phone"
-          id="signupphone"
-          class="form-control hideNumSpin"
-          placeholder="(000)-(0000000)"
-          value={formik.values.phone}
-          onKeyDown={(evt) =>
-            ["e", "E", "+", "-"].includes(evt.key) && evt.preventDefault()
-          }
-          onChange={formik.handleChange}
-        />
-        {formik.errors.phone && (
-          <div className="text-danger cap-first-letter">
-            {formik.errors.phone}
-          </div>
-        )}
+        <CusPhoneInput {...formik} />
       </div>
       <div class="form-group">
         <label class="font-weight-bold">
@@ -169,7 +158,7 @@ export const SignUpForm = () => {
           disabled={formik.isSubmitting}
           style={{ position: "relative" }}
         >
-          {formik.isSubmitting ? <LoadingSpinner /> : "Sign Up"}
+          {formik.isSubmitting ? <LoadingCircle /> : "Sign Up"}
         </button>
         {formMessage && (
           <div
