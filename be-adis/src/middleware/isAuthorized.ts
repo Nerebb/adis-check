@@ -15,14 +15,21 @@ export const isAdvertiser = async (
   res: Response,
   _next: NextFunction
 ) => {
-  const sessionToken = req.cookies['ADIS-AUTH'] || req.headers.accessToken;
+  let sessionToken =
+    req.cookies['ADIS-AUTH'] ||
+    req.headers.accessToken ||
+    req.headers.authorization;
 
+  if (req.headers.authorization) {
+    sessionToken = req.headers.authorization.split(' ')[1];
+  }
   try {
     const userDecoded = jwt.verify(
       sessionToken,
       config.AUTH.jwtSecret
     ) as DecodedUser;
 
+    console.log('maybne');
     if (userDecoded.role !== ERole.Advertiser)
       throw new NotAuthorizedError(
         `Role ${ERole.Advertiser} is required for this action!`
@@ -30,7 +37,7 @@ export const isAdvertiser = async (
 
     _next();
   } catch (err) {
-    throw new NotAuthorizedError(err.message);
+    _next(new NotAuthorizedError(err.message));
   }
 };
 
@@ -39,8 +46,14 @@ export const isAffiliateUser = async (
   res: Response,
   _next: NextFunction
 ) => {
-  const sessionToken = req.cookies['ADIS-AUTH'] || req.headers.accessToken;
+  let sessionToken =
+    req.cookies['ADIS-AUTH'] ||
+    req.headers.accessToken ||
+    req.headers.authorization;
 
+  if (req.headers.authorization) {
+    sessionToken = req.headers.authorization.split(' ')[1];
+  }
   try {
     const userDecoded = jwt.verify(
       sessionToken,
@@ -54,6 +67,6 @@ export const isAffiliateUser = async (
 
     _next();
   } catch (err) {
-    throw new NotAuthorizedError(err.message);
+    _next(new NotAuthorizedError(err.message));
   }
 };

@@ -14,8 +14,8 @@ export const createAdsSchema = yup.object({
     images: yup
       .array(yup.string().matches(regexUtil.URL_REGEX).required())
       .required(),
-    state: yup.string().max(3).required(),
-    country: yup.string().max(3).required(),
+    state: yup.string().required(),
+    country: yup.string().required(),
     city: yup.string().required(),
     description: yup.string().max(1000).required(),
   }),
@@ -33,8 +33,8 @@ export const updateAdsSchema = yup.object({
     images: yup
       .array(yup.string().matches(regexUtil.URL_REGEX).notRequired())
       .notRequired(),
-    state: yup.string().max(3).notRequired(),
-    country: yup.string().max(3).notRequired(),
+    state: yup.string().notRequired(),
+    country: yup.string().notRequired(),
     city: yup.string().notRequired(),
     description: yup.string().max(1000).notRequired(),
   }),
@@ -42,17 +42,17 @@ export const updateAdsSchema = yup.object({
 
 export const getAdsByCategorySchema = yup.object({
   query: yup.object({
-    categoryId: yup.number().integer().min(1).required(),
-    page: yup.number().integer().min(1).required(),
-    limit: yup.number().integer().min(1).required(),
+    page: yup.number().integer().min(1).default(1).required(),
+    limit: yup.number().integer().min(1).default(10).required(),
   }),
 });
 
 export const getAdsBySearchSchema = yup.object({
   query: yup.object({
-    q: yup.number().integer().min(1).notRequired(),
-    page: yup.number().integer().min(1).required(),
-    limit: yup.number().integer().min(1).required(),
+    q: yup.string().notRequired(),
+    categoryId: yup.number().integer().notRequired(),
+    page: yup.number().integer().min(1).default(1).required(),
+    limit: yup.number().integer().min(1).default(10).required(),
   }),
 });
 

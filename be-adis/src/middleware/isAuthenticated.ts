@@ -8,16 +8,26 @@ export const isAuthenticated = async (
   res: Response,
   _next: NextFunction
 ) => {
-  const sessionToken = req.cookies['ADIS-AUTH'] || req.headers.accessToken;
+  let sessionToken =
+    req.cookies['ADIS-AUTH'] ||
+    req.headers.accessToken ||
+    req.headers.authorization;
+
+  if (req.headers.authorization) {
+    sessionToken = req.headers.authorization.split(' ')[1];
+  }
 
   try {
+    console.log('run');
     const userDecoded = jwt.verify(sessionToken, config.AUTH.jwtSecret);
+
+    if (!userDecoded) throw new Error
 
     console.log('Decoded User', userDecoded);
     res.locals.user = userDecoded;
 
     _next();
   } catch (err) {
-    throw new NotAuthorizedError('UnAuthenticated!');
+    _next(new NotAuthorizedError('UnAuthenticated!'));
   }
 };

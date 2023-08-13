@@ -30,21 +30,46 @@ class AuthController {
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       config.AUTH.jwtSecret,
-      { expiresIn: '1h' }
+      { expiresIn: '7d' }
     );
 
     res.cookie('ADIS-AUTH', token, { domain: 'localhost', path: '/' });
 
+    //Santinize Response
+    const responseData = {
+      token,
+      user: {
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+      }
+    }
+
     //Send the jwt in the response
     return new SuccessResponse({
-      data: token,
+      data: responseData,
       message: 'User login successfully',
     }).send(res);
   };
 
+  static checkPassword = async (req: Request, res: Response) => {
+    const { userId: id, email } = res.locals.user
+    const { password } = req.body
+    console.log("🚀 ~ file: AuthController.ts:58 ~ AuthController ~ checkPassword= ~ password:", password)
+    //Get user
+    const user = await userRepository.findOne({ where: { id, email } })
+    if (!user) throw new NotFoundError("User not found")
+
+    //ComparePassword
+    if (!user.checkIfUnencryptedPasswordIsValid(password))
+      throw new NotAuthorizedError('Password incorrect');
+
+    return new SuccessResponse({ message: "authorized" }).send(res)
+  }
+
   static changePassword = async (req: Request, res: Response) => {
     //Get ID from JWT
-    const id = res.locals.jwtPayload.userId;
+    const { userId: id } = res.locals.user;
 
     //Get parameters from the body
     const { oldPassword, newPassword } = req.body;

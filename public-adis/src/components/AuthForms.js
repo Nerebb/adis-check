@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 import axiosApi from "../app/axiosApi";
 import { checkEmail } from "../validation/auth.validation";
-import { LoadingSpinner } from "./constants/LoadingSpinner";
+import { LoadingCircle } from "./constants/LoadingCircle";
 import SignInForm from "./formikForms/SignInForm";
 import { SignUpForm } from "./formikForms/SignUpForm";
 
@@ -10,12 +10,12 @@ const initFormData = {
   email: "facedev1806@gmail.com",
 
   //RecoverPasswordForm
-  recoverEmail: undefined,
-  recoverEmailErr: undefined,
+  recoverEmail: "",
+  recoverEmailErr: "",
 
   //Alternative Field
   isSubmitting: false,
-  message: undefined,
+  message: "",
 };
 
 const AuthForms = () => {
@@ -29,14 +29,13 @@ const AuthForms = () => {
         nextState.recoverEmailErr = error.message ?? "Invalid email";
       }
     }
-
     return { ...prevState, ...nextState };
   }, initFormData);
 
   async function submitForgotPassword(event) {
     event.preventDefault();
     if (formData.recoverEmailErr) return;
-    else setFormData({ isSubmitting: true, recoverEmailErr: "" });
+    else setFormData({ isSubmitting: true, recoverEmailErr: "", message: "" });
 
     //Debounce
     await new Promise((_) => setTimeout(_, 2000));
@@ -49,7 +48,7 @@ const AuthForms = () => {
       await axiosApi.recover(email);
 
       //Response
-      return setFormData({
+      setFormData({
         ...initFormData,
         message: "Password has been sent to your registered email",
       });
@@ -209,11 +208,11 @@ const AuthForms = () => {
                           disabled={formData.isSubmitting}
                         >
                           {formData.isSubmitting ? (
-                            <LoadingSpinner />
+                            <LoadingCircle />
                           ) : (
                             <>
                               <i class="fa fa-envelope"></i>
-                              "Send Request"
+                              Send Request
                             </>
                           )}
                         </button>
