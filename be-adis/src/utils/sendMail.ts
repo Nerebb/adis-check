@@ -10,4 +10,6 @@ const sendMail = async (options: MailDataRequired) => {
   });
 };
 
+export const EmailTemplate = {}
+
 export default sendMail;

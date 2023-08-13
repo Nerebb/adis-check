@@ -30,20 +30,22 @@ export const signInSchema = yup.object({
 });
 
 export const signUpSchema = yup.object({
-  email: yup.string().email().required(),
-  password: yup
-    .string()
-    .required()
-    .matches(
-      passwordRegex,
-      "Password must at least 6 non-whitespace characters"
-    ),
-  phone: yup.string().max(10),
-  username: yup
-    .string()
-    .matches(
-      passwordRegex,
-      "Username must at least 6 non-whitespace characters"
-    )
-    .required(),
+  body: yup.object({
+    email: yup.string().email().required(),
+    password: yup
+      .string()
+      .required()
+      .matches(
+        passwordRegex,
+        "Password must at least 6 non-whitespace characters"
+      ),
+    phone: yup.string().max(10),
+    username: yup
+      .string()
+      .matches(
+        passwordRegex,
+        "Username must at least 6 non-whitespace characters"
+      )
+      .required(),
+  })
 });

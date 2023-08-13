@@ -49,9 +49,9 @@ class UserController {
 
     const r = await sendMail({
       to: email,
+      from: config.SG_SENDER,
       subject: 'Test email',
       html: 'Test content',
-      from: config.SG_SENDER
     });
 
     console.log('r1', r);
