@@ -39,7 +39,7 @@ export const signUpSchema = yup.object({
         passwordRegex,
         "Password must at least 6 non-whitespace characters"
       ),
-    phone: yup.string().max(10),
+    phone: yup.string(),
     username: yup
       .string()
       .matches(

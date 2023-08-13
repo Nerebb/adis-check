@@ -10,7 +10,8 @@ import {
 } from '../helpers/utils';
 import { HttpCode } from '../utils/httpCode';
 import { User } from '../models/entities/User';
-import sendMail from '../utils/sendMail';
+// import sendMail from '../utils/sendMail';
+import sendMail from '../utils/mailgun';
 import config from '../config';
 
 type TUpdateUser = Partial<
@@ -49,7 +50,7 @@ class UserController {
 
     const r = await sendMail({
       to: email,
-      from: config.SG_SENDER,
+      from: `ADIS Support <${config.SG_SENDER}>`,
       subject: 'Test email',
       html: 'Test content',
     });

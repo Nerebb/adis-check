@@ -20,5 +20,7 @@ export default {
       : false,
   },
   SG_API_KEY: process.env.SG_API_KEY ?? '',
-  SG_SENDER: process.env.SG_SENDER ?? 'trunghieu186@gmail.com'
+  SG_SENDER: process.env.SG_SENDER ?? 'trunghieu186@gmail.com',
+  MAILGUN_API_KEY: process.env.MAILGUN_API_KEY ?? 'dd94d44c89ff1f6a62f4f1702a78d373-28e9457d-e84337f1',
+  MG_DOMAIN: 'sandbox13cf97c51ec34d448226f32fed8fd59f.mailgun.org'
 };
