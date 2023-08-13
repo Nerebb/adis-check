@@ -66,6 +66,7 @@ export function AuthProvider({ children }) {
   async function logout() {
     setToken(null);
     setUser(initAuthState);
+    window.location.replace("/");
   }
 
   return (

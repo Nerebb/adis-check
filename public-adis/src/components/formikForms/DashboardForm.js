@@ -5,11 +5,10 @@ import {
   allowedGender,
   updateProfileSchema,
 } from "../../validation/user.validation";
-import { LoadingCircle } from "../constants/LoadingCircle";
+import { ConfirmPassword } from "../constants/ConfirmPassword";
 import { CusPhoneInput } from "./customField/CusPhoneInput";
 import { RadioGroup } from "./customField/RadioGroup";
 import { SelectionInput } from "./customField/SelectionInput";
-import { ConfirmPassword } from "../constants/ConfirmPassword";
 
 const initialValues = {
   firstName: undefined,
@@ -114,7 +113,7 @@ export const DashboardForm = () => {
             id="password"
             type="password"
             class="form-control"
-            placeholder="***********"
+            placeholder="Change your password"
             value={formik.values.password}
             onChange={formik.handleChange}
           />
@@ -134,7 +133,11 @@ export const DashboardForm = () => {
         )}
       </div>
       <div class="col-md-6 col-xl-6 col-lg-6 col-sm-12 col-12">
-        <SelectionInput label="Country" formikForm={formik} />
+        <SelectionInput
+          label="Country"
+          options={["123", "342", "243234"]}
+          formikForm={formik}
+        />
         {formik.errors.country && (
           <div className="text-danger cap-first-letter">
             {formik.errors.country}

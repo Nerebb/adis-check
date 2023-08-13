@@ -4,11 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 export const Widget = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   async function handleLogout(e) {
     e.preventDefault();
     logout();
-    navigate("/");
   }
   return (
     <div class="widget">

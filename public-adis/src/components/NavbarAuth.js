@@ -5,12 +5,10 @@ import React, { useState } from "react";
 
 const NavbarAuth = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   async function handleLogout(e) {
     e.preventDefault();
     await logout();
-    navigate("/");
   }
 
   return (

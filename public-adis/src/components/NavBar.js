@@ -1,9 +1,11 @@
 import React from "react";
 import TopBar, { TopBar2 } from "./TopBar";
 import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   return (
     <div className="background-header">
       <TopBar />
