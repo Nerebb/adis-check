@@ -47,15 +47,6 @@ class UserController {
       throw new DuplicateError('Username or email was registered!', 400);
     }
 
-    const r = await sendMail({
-      to: email,
-      subject: 'Test email',
-      html: 'Test content',
-      from: config.SG_SENDER
-    });
-
-    console.log('r1', r);
-
     user = await userRepository.create({
       username,
       password,

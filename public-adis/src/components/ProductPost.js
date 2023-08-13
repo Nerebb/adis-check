@@ -1,6 +1,36 @@
+import Basic from "../utils/UploadImage";
+import { cloudinaryUpload } from "../utils/cloudinary";
+import { useState, useCallback } from "react";
+
 const ProductPost = ({ product }) => {
+  const [files, setFiles] = useState(null);
+
+  const handleDrop = useCallback(
+    async (acceptedFiles) => {
+      console.log("run");
+      if (acceptedFiles) {
+        const file = acceptedFiles[0];
+        const urlFile = await cloudinaryUpload(
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        ); // => laays url
+
+        if (urlFile) {
+          setFiles(
+            <li key={file.path}>
+              <img src={urlFile} alt="434" />
+            </li>
+          );
+        }
+      }
+    },
+    [setFiles]
+  );
+
   return (
     <div class="post-section blog">
+      <Basic onDrop={handleDrop} components={files} />
       <div class="container">
         <div class="row">
           <div class="col-lg-10">
