@@ -83,6 +83,9 @@ export class User extends BaseEntity {
   @IsNotEmpty()
   role: ERole;
 
+  @Column({ type: 'boolean' })
+  isVerify: boolean;
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;

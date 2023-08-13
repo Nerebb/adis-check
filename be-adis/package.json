@@ -12,7 +12,7 @@
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
-    "migration:run": "npx typeorm-ts-node-esm migration:run -d ./data-source.ts",
+    "migration:run": "npx typeorm-ts-node-esm migration:run -d ./dist/data-source.ts",
     "migration:revert": "npx typeorm-ts-node-esm migration:revert -d ./data-source.ts"
   },
   "keywords": [],
@@ -47,6 +47,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "form-data": "^4.0.0",

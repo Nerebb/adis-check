@@ -58,4 +58,6 @@ router.get(
   catchError(AdsController.getByAdvertiser)
 );
 
+router.get('/verifyAds', catchError(AdsController.verifyAds));
+
 export default router;

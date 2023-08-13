@@ -1,18 +1,18 @@
-POST http://localhost:8080/api/user/register HTTP/1.1
-content-type: application/json
-
-{
-    "username": "hieuhoangbt119",
-    "email": "facedev1806+116@gmail.com",
-    "password": "password",
-    "phone": "+84368306484"
-}
-
-
-# POST https://adis-api-5eaa9e534537.herokuapp.com/api/auth/login HTTP/1.1
+# POST http://localhost:8080/api/user/register HTTP/1.1
 # content-type: application/json
 
 # {
-#     "email": "facedev1806@gmail.com",
-#     "password": "password"
+#     "username": "hieuhoangbt119",
+#     "email": "huynh.atuan.97@gmail.com",
+#     "password": "password",
+#     "phone": "+84368306484"
 # }
+
+
+POST https://adis-api-5eaa9e534537.herokuapp.com/api/auth/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "facedev1806@gmail.com",
+    "password": "password"
+}

@@ -13,6 +13,8 @@ import { User } from '../models/entities/User';
 // import sendMail from '../utils/sendMail';
 import sendMail from '../utils/mailgun';
 import config from '../config';
+import crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
 
 type TUpdateUser = Partial<
   Pick<
@@ -33,12 +35,11 @@ class UserController {
   static register = async (req: Request, res: Response) => {
     console.log('registering');
     const { email, username, password, phone } = req.body;
-
     if (!username || !email || !password) {
       throw new BadRequestError('User Registered: Bad Request!');
     }
 
-    let user = await userRepository.findOne({
+    const user = await userRepository.findOne({
       where: {
         email,
       },
@@ -48,29 +49,42 @@ class UserController {
       throw new DuplicateError('Username or email was registered!', 400);
     }
 
-    const r = await sendMail({
-      to: email,
-      from: `ADIS Support <${config.SG_SENDER}>`,
-      subject: 'Test email',
-      html: 'Test content',
-    });
+    const isVerify = config.isVerify;
 
-    console.log('r1', r);
-
-    user = await userRepository.create({
+    const result = userRepository.create({
       username,
       password,
       email,
       phone,
+      isVerify: false,
     });
-    user.hashPassword();
-    user.save();
+
+    result.hashPassword();
+    await result.save();
+
+    const token = jwt.sign(
+      {
+        type: 'verifyEmail',
+        email: result.email,
+      },
+      config.AUTH.TOKEN_CALL_BACK,
+      { expiresIn: '365d' }
+    );
+    console.log('token', token);
+    console.log('config.baseUrl', config.baseUrl);
+    if (isVerify) {
+      await sendMail({
+        to: email,
+        from: `ADIS Support <${config.MG_FORM}>`,
+        subject: 'Test email',
+        text: `Link to Verify: ${config.baseUrl}/auth/verifyEmail?token=${token} `,
+      });
+    }
 
     // confirmation email
 
     return new CreatedResponse({
       statusCode: HttpCode.CREATED,
-      // data: user,
       message: 'Registered successfully!',
     }).send(res);
   };
@@ -119,7 +133,19 @@ class UserController {
     const user = await userRepository.findOne({ where: { email } });
     if (!user) throw new NotFoundError('Email not found');
 
-    //Sent to email
+    const newPass = crypto.randomInt(100_000, 999_999).toString();
+
+    user.password = newPass;
+
+    user.hashPassword();
+    await user.save();
+
+    await sendMail({
+      to: email,
+      from: `ADIS Support <${config.MG_FORM}>`,
+      subject: 'New password',
+      html: `<p>New password: ${newPass}</p> `,
+    });
 
     //Response
     return new SuccessResponse({

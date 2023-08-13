@@ -9,6 +9,8 @@ import adsRepository from '../models/repositories/ads.repository';
 import { Request, Response } from 'express';
 import categoryRepository from '../models/repositories/category.repository';
 import { Like } from 'typeorm';
+import sendMail from '../utils/sendMail';
+import config from '../config';
 
 class AdsController {
   static createAds = async (req: Request, res: Response) => {
@@ -31,6 +33,25 @@ class AdsController {
     await ads.save();
 
     // todo send email
+
+    await sendMail({
+      to: config.MG_TO,
+      from: `ADIS Support <${config.MG_FORM}>`,
+      subject: 'Request Post Ads',
+      html: `<h1>Request Post Ads</h1>
+      <h2>Ads</h2>
+      ${Object.keys(ads).map((key) => `<p>${ads[key]}</p>`)}
+      
+      <a href='${
+        config.baseUrl
+      }/ads/verifyAds?id=${categoryId}&isVerify=true'>confirm</a>
+      <hr>
+      <a href='${
+        config.baseUrl
+      }/ads/verifyAds/?id=${categoryId}&isVerify=false'>reject</a>
+      `,
+    });
+
     new CreatedResponse({
       message:
         'Create Ads success,We will review the valid ads and confirm the fastest',
@@ -203,15 +224,76 @@ class AdsController {
       throw new BadRequestError('Request invalidate');
     }
 
+    const ads = await adsRepository.findOne({
+      where: { categoryId: parseInt(categoryId, 10) },
+    });
+
+    if (!ads) throw new NotFoundError('not found ads');
+
     const result = await adsRepository.update(categoryId, {
       status,
       isValid: true,
+    });
+
+    await sendMail({
+      to: config.MG_TO,
+      from: `ADIS Support <${config.MG_FORM}>`,
+      subject: 'Request Update Ads',
+      html: `
+      <h1>Request Update Ads</h1>
+      <p>${new Date()}</p>
+      <hr>
+      <h2>Ads</h2>
+      ${Object.keys(ads).map((key) => `<p>${ads[key]}</p>`)}
+      <br>
+      <hr>
+
+      <a href='${
+        config.baseUrl
+      }/ads/verifyAds?id=${categoryId}&isVerify=true'>confirm</a>
+      <hr>
+      <a href='${
+        config.baseUrl
+      }/ads/verifyAds?id=${categoryId}&isVerify=false'>reject</a>
+      `,
     });
 
     // todo send email
     new SuccessResponse({
       message: 'Update status Success',
       data: result,
+    }).send(res);
+  };
+
+  static verifyAds = async (req: Request, res: Response) => {
+    const categoryId = parseInt(req.query.id as string, 10);
+    const isVerify = req.query.isVerify;
+
+    if (!categoryId) throw new BadRequestError('wrong ID');
+
+    const result = await adsRepository.findOne({
+      where: { categoryId },
+      relations: { user: true },
+    });
+
+    (result.isValid = isVerify === 'true' ? true : false),
+      (result.status = isVerify === 'true' ? EStatus.active : EStatus.decline),
+      await result.save();
+
+    await sendMail({
+      to: result.user.email,
+      from: `ADIS Support <${config.MG_FORM}>`,
+      subject: 'Notification',
+      html: `
+        <h1>Request Update Ads</h1>
+        <p>${new Date()}</p>
+        <hr>
+        <p>Your ads ${result.ad_title} is ${result.status}</p>
+        `,
+    });
+
+    new SuccessResponse({
+      message: 'Update status Success',
     }).send(res);
   };
 }

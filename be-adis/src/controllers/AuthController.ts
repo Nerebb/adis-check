@@ -11,6 +11,7 @@ import {
   NotFoundError,
   SuccessResponse,
 } from '../helpers/utils';
+import { DecodedUser } from '../middleware/isAuthorized';
 
 class AuthController {
   static login = async (req: Request, res: Response) => {
@@ -25,6 +26,10 @@ class AuthController {
     //Check if encrypted password match
     if (!user.checkIfUnencryptedPasswordIsValid(password))
       throw new NotAuthorizedError('Email or password incorrect');
+
+    if (config.isVerify && !user.isVerify) {
+      throw new NotAuthorizedError('Email not Verify');
+    }
 
     //Sing JWT, valid for 1 hour
     const token = jwt.sign(
@@ -42,8 +47,8 @@ class AuthController {
         userId: user.id,
         username: user.username,
         email: user.email,
-      }
-    }
+      },
+    };
 
     //Send the jwt in the response
     return new SuccessResponse({
@@ -53,19 +58,22 @@ class AuthController {
   };
 
   static checkPassword = async (req: Request, res: Response) => {
-    const { userId: id, email } = res.locals.user
-    const { password } = req.body
-    console.log("🚀 ~ file: AuthController.ts:58 ~ AuthController ~ checkPassword= ~ password:", password)
+    const { userId: id, email } = res.locals.user;
+    const { password } = req.body;
+    console.log(
+      '🚀 ~ file: AuthController.ts:58 ~ AuthController ~ checkPassword= ~ password:',
+      password
+    );
     //Get user
-    const user = await userRepository.findOne({ where: { id, email } })
-    if (!user) throw new NotFoundError("User not found")
+    const user = await userRepository.findOne({ where: { id, email } });
+    if (!user) throw new NotFoundError('User not found');
 
     //ComparePassword
     if (!user.checkIfUnencryptedPasswordIsValid(password))
       throw new NotAuthorizedError('Password incorrect');
 
-    return new SuccessResponse({ message: "authorized" }).send(res)
-  }
+    return new SuccessResponse({ message: 'authorized' }).send(res);
+  };
 
   static changePassword = async (req: Request, res: Response) => {
     //Get ID from JWT
@@ -103,6 +111,24 @@ class AuthController {
     userRepository.save(user);
 
     res.status(204).send();
+  };
+
+  static verifyEmail = async (req: Request, res: Response) => {
+    const token = req.query.token as string;
+
+    const userDecoded = jwt.verify(
+      token,
+      config.AUTH.TOKEN_CALL_BACK
+    ) as DecodedUser;
+
+    if (!userDecoded) throw new NotAuthorizedError('UnAuthenticated');
+
+    await userRepository.update(
+      { email: userDecoded.email },
+      { isVerify: true }
+    );
+
+    res.redirect(`${config.baseurl_client}/loginRegister`);
   };
 
   // static softDelete = async (req: Request, res: Response) => {

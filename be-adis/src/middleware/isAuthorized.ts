@@ -4,7 +4,7 @@ import { ERole } from '../models/entities/User';
 import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 
-interface DecodedUser {
+export interface DecodedUser {
   userId: string;
   email: string;
   role: ERole;

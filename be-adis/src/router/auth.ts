@@ -7,7 +7,13 @@ const router = express.Router();
 
 router.post('/login', catchError(AuthController.login));
 
-router.post('/checkPassword', isAuthenticated, catchError(AuthController.checkPassword))
+router.post(
+  '/checkPassword',
+  isAuthenticated,
+  catchError(AuthController.checkPassword)
+);
+
+router.get('/verifyEmail', catchError(AuthController.verifyEmail));
 
 // router.post("/delete", catchError(AuthController.softDelete));
 export default router;
